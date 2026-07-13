@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>楚瑞智能科技 · 商业画布</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f172a;font-family:-apple-system,"Microsoft YaHei",sans-serif;padding:28px 24px;color:#f1f5f9;min-height:100vh}
+
+/* 顶部栏 */
+.topbar{max-width:1500px;margin:0 auto 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.topbar h1{font-size:26px;color:#f1f5f9}
+.topbar .meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.topbar .btn{padding:8px 18px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-save{background:#22c55e;color:#fff}
+.btn-save:hover{background:#16a34a}
+.legend-row{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;align-items:center;color:#cbd5e1}
+
+/* 画布容器 */
+.canvas-wrap{max-width:1500px;margin:0 auto;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:auto auto auto;gap:10px}
+
+/* 通用块 */
+.bmc-block{border-radius:12px;padding:16px;overflow:hidden;display:flex;flex-direction:column;min-height:220px}
+.bmc-block .block-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid rgba(255,255,255,.2);cursor:help}
+.bmc-block .block-hd h2{font-size:18px;margin:0}
+.bmc-block .block-content{flex:1;overflow-y:auto}
+
+/* 配色 - 深底高对比 */
+.bmc-kp{background:#1a1a2e;border:2px solid #f59e0b}
+.bmc-kp .block-hd h2{color:#fbbf24}
+.bmc-ka{background:#1a1a2e;border:2px solid #f59e0b}
+.bmc-ka .block-hd h2{color:#fbbf24}
+.bmc-kr{background:#1a1a2e;border:2px solid #f59e0b}
+.bmc-kr .block-hd h2{color:#fbbf24}
+.bmc-vp{background:#1e1b4b;border:3px solid #818cf8}
+.bmc-vp .block-hd h2{color:#a5b4fc}
+.bmc-cr{background:#1a1a2e;border:2px solid #f59e0b}
+.bmc-cr .block-hd h2{color:#fbbf24}
+.bmc-ch{background:#1a1a2e;border:2px solid #f59e0b}
+.bmc-ch .block-hd h2{color:#fbbf24}
+.bmc-cs{background:#1e1b4b;border:3px solid #818cf8}
+.bmc-cs .block-hd h2{color:#a5b4fc}
+.bmc-cost{background:#2e1a1a;border:2px solid #fca5a5}
+.bmc-cost .block-hd h2{color:#fecaca}
+.bmc-rev{background:#1a2e1a;border:2px solid #86efac}
+.bmc-rev .block-hd h2{color:#bbf7d0}
+
+/* 内容行 - 全部亮色 */
+.bmc-block .line{font-size:16px;line-height:1.7;margin-bottom:2px;padding:2px 4px;border-radius:4px}
+.bmc-block .line.confirmed{color:#f1f5f9}
+.bmc-block .line.inferred{color:#fde68a}
+.bmc-block .line.question{color:#fca5a5}
+.bmc-block .line.sub{color:#cbd5e1;font-size:14px;padding-left:12px}
+.bmc-block .line.blank{font-size:14px;color:#94a3b8}
+.editable{cursor:text;border-radius:4px;transition:all .15s}
+.editable:hover{background:rgba(56,189,248,.12)}
+.editable:focus{background:rgba(56,189,248,.2);outline:2px solid #38bdf8;padding:4px 8px}
+.inline-input{background:#1e293b;border:2px solid #38bdf8;border-radius:6px;color:#f1f5f9;padding:6px 10px;font-size:16px;width:100%;font-family:inherit}
+.inline-input:focus{outline:none}
+
+/* 悬浮提示 - 深底高对比 */
+.tooltip{display:none;position:fixed;z-index:9999;background:#1e293b;border:2px solid #818cf8;border-radius:12px;padding:20px 24px;max-width:480px;box-shadow:0 12px 40px rgba(0,0,0,.8);font-size:15px;line-height:1.8;color:#e2e8f0}
+.tooltip.show{display:block}
+.tooltip h3{font-size:18px;color:#a5b4fc;margin-bottom:8px}
+.tooltip p{margin-bottom:6px;color:#cbd5e1}
+.tooltip ul{padding-left:16px;margin-top:4px}
+.tooltip li{margin-bottom:3px;font-size:14px;color:#e2e8f0}
+
+/* 内容行 */
+.bmc-block .line{font-size:16px;line-height:1.7;margin-bottom:2px;padding:2px 4px;border-radius:4px}
+.bmc-block .line.confirmed{color:#e2e8f0}
+.bmc-block .line.inferred{color:#fcd34d}
+.bmc-block .line.question{color:#fca5a5}
+.bmc-block .line.sub{color:#94a3b8;font-size:14px;padding-left:12px}
+.bmc-block .line.blank{font-size:14px;color:#64748b}
+.editable{cursor:text;border-radius:4px;transition:all .15s}
+.editable:hover{background:rgba(56,189,248,.08)}
+.editable:focus{background:rgba(56,189,248,.15);outline:2px solid #38bdf8;padding:4px 8px}
+.inline-input{background:#1e293b;border:2px solid #38bdf8;border-radius:6px;color:#e2e8f0;padding:6px 10px;font-size:16px;width:100%;font-family:inherit}
+.inline-input:focus{outline:none}
+
+/* 悬浮提示 */
+.tooltip{display:none;position:fixed;z-index:9999;background:#1e293b;border:2px solid #4f46e5;border-radius:12px;padding:20px 24px;max-width:480px;box-shadow:0 12px 40px rgba(0,0,0,.6);font-size:15px;line-height:1.8;color:#cbd5e1}
+.tooltip.show{display:block}
+.tooltip h3{font-size:18px;color:#818cf8;margin-bottom:8px}
+.tooltip p{margin-bottom:6px;color:#94a3b8}
+.tooltip ul{padding-left:16px;margin-top:4px}
+.tooltip li{margin-bottom:3px;font-size:14px}
+
+/* 提示 */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 24px;border-radius:24px;font-size:14px;font-weight:600;z-index:9999;animation:toastIn .3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* 响应式 */
+@media(max-width:1100px){
+ .canvas-wrap{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+ .bmc-block{grid-column:span 1!important;grid-row:auto!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+ <h1>📋 楚瑞智能科技 · 商业画布</h1>
+ <div class="meta">
+  <div class="legend-row">
+   <span style="color:#e2e8f0">✅ 已确认</span>
+   <span style="color:#fcd34d">⚠️ 推断</span>
+   <span style="color:#fca5a5">❓ 待补充</span>
+  </div>
+  <button class="btn btn-save" onclick="saveAsHTML()" title="下载修改后的 HTML 文件">💾 保存修改</button>
+ </div>
+</div>
+
+<!-- ===== 画布 ===== -->
+<div class="canvas-wrap">
+
+ <!-- 关键伙伴 KP: row1-2, col1-2 -->
+ <div class="bmc-block bmc-kp" style="grid-row:1/3;grid-column:1/3">
+  <div class="block-hd" onmouseenter="showTooltip(event,'kp')" onmouseleave="hideTooltip()"><h2>关键伙伴</h2><span style="color:#64748b;font-size:13px">Key Partners</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="kp1">✅ 上游零部件供应商：直线电机/伺服电机/空心杯电机（日系三巨头+汇川）、工业相机+镜头（索尼/基恩士/海康）、气动元件（SMC/Festo）、供料器（松下/雅马哈）、运动控制卡（固高/雷赛/泰道）</div>
+   <div class="line confirmed editable" data-field="kp2">✅ 行业组织：CPCA（中国电子电路行业协会）、SMT专委会</div>
+   <div class="line question editable" data-field="kp3">❓ 已有合作的上游供应商？</div>
+   <div class="line question editable" data-field="kp4">❓ 是否有高校/科研院所合作？</div>
+   <div class="line question editable" data-field="kp5">❓ 苏州本地产业园区政策支持？</div>
+  </div>
+ </div>
+
+ <!-- 关键业务 KA: row1, col3-4 -->
+ <div class="bmc-block bmc-ka" style="grid-row:1/2;grid-column:3/5">
+  <div class="block-hd" onmouseenter="showTooltip(event,'ka')" onmouseleave="hideTooltip()"><h2>关键业务</h2><span style="color:#64748b;font-size:13px">Key Activities</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="ka1">✅ 精密零部件制造：高承载自润型滑轨、电滑环、磁编码盘、磁栅尺位移测量</div>
+   <div class="line confirmed editable" data-field="ka2">✅ 贴片机整机集成</div>
+   <div class="line confirmed editable" data-field="ka3">✅ 市场调研与知识管理（产业链数据库+竞品画像+行业Agent）</div>
+   <div class="line question editable" data-field="ka4">❓ 零部件自主生产还是外协？</div>
+   <div class="line question editable" data-field="ka5">❓ 贴片机整机是否已有样机/出货？</div>
+  </div>
+ </div>
+
+ <!-- 核心资源 KR: row2, col3-4 -->
+ <div class="bmc-block bmc-kr" style="grid-row:2/3;grid-column:3/5">
+  <div class="block-hd" onmouseenter="showTooltip(event,'kr')" onmouseleave="hideTooltip()"><h2>核心资源</h2><span style="color:#64748b;font-size:13px">Key Resources</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="kr1">✅ 4项已公开核心专利（滑轨/电滑环/编码盘/磁栅尺）</div>
+   <div class="line confirmed editable" data-field="kr2">✅ 资质：江苏省民营科技企业、科技型中小企业、姑苏创业领军人才</div>
+   <div class="line confirmed editable" data-field="kr3">✅ 苏州吴江区——长三角电子制造核心区</div>
+   <div class="line confirmed editable" data-field="kr4">✅ 数据资产：产业链全景数据库+竞品画像库+关键词标签库</div>
+   <div class="line question editable" data-field="kr5">❓ 公司人数？研发/生产/销售配比？</div>
+   <div class="line question editable" data-field="kr6">❓ 工厂/产线？融资情况？</div>
+  </div>
+ </div>
+
+ <!-- 价值主张 VP: row1-2, col5-6 -->
+ <div class="bmc-block bmc-vp" style="grid-row:1/3;grid-column:5/7">
+  <div class="block-hd" onmouseenter="showTooltip(event,'vp')" onmouseleave="hideTooltip()"><h2>⭐ 价值主张</h2><span style="color:#64748b;font-size:13px">Value Proposition</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="vp1">✅ 核心零部件自主可控——国内少数拥有滑轨+电滑环+编码盘+磁栅尺全套自主专利</div>
+   <div class="line confirmed editable" data-field="vp2">✅ 替代进口依赖——竞品导轨依赖日本THK/NSK，光栅尺依赖德国海德汉，楚瑞可替代</div>
+   <div class="line confirmed editable" data-field="vp3">✅ 供应链安全——中美脱钩+国产替代政策+工信部15%设备补贴</div>
+   <div class="line confirmed editable" data-field="vp4">✅ "零部件+整机"双业务线——零件可单卖，整机可渗透终端</div>
+   <div class="line confirmed editable" data-field="vp5">✅ 自润滑免维护——自润型滑轨无需频繁加油，承载更强</div>
+   <div class="line blank editable" data-field="vp6"></div>
+   <div class="line inferred editable" data-field="vp7">⚠️ VS 路远(98%自研→缺导轨) VS 易通(99%→缺光栅尺) VS 木几(96%→两者都缺)</div>
+   <div class="line inferred editable" data-field="vp8">⚠️ 楚瑞是目前唯一同时覆盖滑轨+电滑环+编码盘+磁栅尺的国产供应商</div>
+  </div>
+ </div>
+
+ <!-- 客户关系 CR: row1, col7-8 -->
+ <div class="bmc-block bmc-cr" style="grid-row:1/2;grid-column:7/9">
+  <div class="block-hd" onmouseenter="showTooltip(event,'cr')" onmouseleave="hideTooltip()"><h2>客户关系</h2><span style="color:#64748b;font-size:13px">Customer Relationships</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="cr1">✅ 定制化技术支持——精密零部件需与客户设备适配</div>
+   <div class="line confirmed editable" data-field="cr2">✅ 长期供应关系——B2B客户粘性高，验证后不轻易换</div>
+   <div class="line confirmed editable" data-field="cr3">✅ 内容营销建立信任——抖音车间实景+公众号技术科普+产业链数据库</div>
+   <div class="line question editable" data-field="cr4">❓ 现有客户维护方式？售后团队规模？</div>
+  </div>
+ </div>
+
+ <!-- 渠道通路 CH: row2, col7-8 -->
+ <div class="bmc-block bmc-ch" style="grid-row:2/3;grid-column:7/9">
+  <div class="block-hd" onmouseenter="showTooltip(event,'ch')" onmouseleave="hideTooltip()"><h2>渠道通路</h2><span style="color:#64748b;font-size:13px">Channels</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="ch1">✅ 直销：B2B面向竞品（零部件）+ 面向终端制造企业（整机）</div>
+   <div class="line confirmed editable" data-field="ch2">✅ 展会：NEPCON亚洲电子展 / 慕尼黑上海电子生产设备展 / CEF</div>
+   <div class="line confirmed editable" data-field="ch3">✅ 线上：抖音（车间实景+工程师出镜）+ 公众号（技术科普）+ 产业链数据库</div>
+   <div class="line confirmed editable" data-field="ch4">✅ 行业组织：CPCA / SMT专委会会员渠道</div>
+   <div class="line question editable" data-field="ch5">❓ 现有销售团队？主要通过什么方式获客？</div>
+  </div>
+ </div>
+
+ <!-- 客户细分 CS: row1-2, col9-10 -->
+ <div class="bmc-block bmc-cs" style="grid-row:1/3;grid-column:9/11">
+  <div class="block-hd" onmouseenter="showTooltip(event,'cs')" onmouseleave="hideTooltip()"><h2>⭐ 客户细分</h2><span style="color:#64748b;font-size:13px">Customer Segments</span></div>
+  <div class="block-content">
+   <div class="line confirmed editable" data-field="cs1">✅ 【第一层：竞品公司】利基市场</div>
+   <div class="line sub confirmed editable" data-field="cs1a">路远/易通/木几——他们导轨/光栅尺靠进口</div>
+   <div class="line confirmed editable" data-field="cs2">✅ 【第二层：竞品的终端客户】利基市场</div>
+   <div class="line sub confirmed editable" data-field="cs2a">华为/比亚迪/格力/TCL/美的/立讯/丰田/中国航发/中国电子/中国电科</div>
+   <div class="line confirmed editable" data-field="cs3">✅ 【第三层：直接整机客户】区隔化市场</div>
+   <div class="line sub confirmed editable" data-field="cs3a">长三角SMT代工厂 / 汽车电子制造厂 / LED封装厂 / 军工科研单位</div>
+   <div class="line question editable" data-field="cs4">❓ 已有付费客户？哪种类型？主攻哪个行业？</div>
+  </div>
+ </div>
+
+ <!-- 成本结构 C$: row3, col1-5 -->
+ <div class="bmc-block bmc-cost" style="grid-row:3/4;grid-column:1/6">
+  <div class="block-hd" onmouseenter="showTooltip(event,'cost')" onmouseleave="hideTooltip()"><h2>成本结构</h2><span style="color:#64748b;font-size:13px">Cost Structure</span></div>
+  <div class="block-content" style="display:flex;flex-wrap:wrap;gap:24px">
+   <div style="flex:1;min-width:200px">
+    <div class="line confirmed editable" data-field="cost1">✅ 研发成本：精密零部件设计+测试+专利申请+整机集成研发</div>
+    <div class="line confirmed editable" data-field="cost2">✅ 生产制造成本：金属材料/轴承/电子元件/外购零部件</div>
+    <div class="line confirmed editable" data-field="cost3">✅ 人力成本：研发+生产+管理+销售</div>
+    <div class="line inferred editable" data-field="cost4">⚠️ 类型判断：价值驱动型——核心竞争力在自研专利，非低价竞争</div>
+   </div>
+   <div style="flex:1;min-width:200px">
+    <div class="line question editable" data-field="cost5">❓ 研发投入占比？</div>
+    <div class="line question editable" data-field="cost6">❓ 主要成本构成比例？</div>
+    <div class="line question editable" data-field="cost7">❓ 人员规模？</div>
+   </div>
+  </div>
+ </div>
+
+ <!-- 收入来源 R$: row3, col6-10 -->
+ <div class="bmc-block bmc-rev" style="grid-row:3/4;grid-column:6/11">
+  <div class="block-hd" onmouseenter="showTooltip(event,'rev')" onmouseleave="hideTooltip()"><h2>收入来源</h2><span style="color:#64748b;font-size:13px">Revenue Streams</span></div>
+  <div class="block-content" style="display:flex;flex-wrap:wrap;gap:24px">
+   <div style="flex:1;min-width:200px">
+    <div class="line confirmed editable" data-field="rev1">✅ 零部件销售：滑轨/电滑环/编码盘/磁栅尺 → 竞品或终端客户</div>
+    <div class="line confirmed editable" data-field="rev2">✅ 贴片机整机销售：→ SMT代工厂/电子制造商</div>
+    <div class="line confirmed editable" data-field="rev3">✅ 技术服务收入：零部件适配/系统集成/售后维护</div>
+   </div>
+   <div style="flex:1;min-width:200px">
+    <div class="line question editable" data-field="rev4">❓ 目前主要收入来源？零件 vs 整机？</div>
+    <div class="line question editable" data-field="rev5">❓ 定价策略？毛利率水平？</div>
+    <div class="line question editable" data-field="rev6">❓ 已有付费客户数量和客单价？</div>
+   </div>
+  </div>
+ </div>
+
+</div>
+
+<!-- 悬浮提示 -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ====== 名词解释 ======
+const definitions={
+ kp:{title:'关键伙伴 Key Partners',desc:'描绘让商业模式有效运作所需的供应商与合作伙伴网络。',items:['四种合作类型：①非竞争者间的战略联盟 ②竞争者间的竞合 ③合资开发新业务 ④购买方-供应商关系','三种合作动机：①优化和规模效应（降本）②降低风险和不确定性 ③获取特定资源（自己不做的外包）']},
+ ka:{title:'关键业务 Key Activities',desc:'描绘为了确保商业模式可行，企业必须做的最重要的事情。',items:['制造产品(Production)：设计、制造及交付产品','解决问题(Problem Solving)：为客户的具体问题提供解决方案','平台/网络(Platform)：构建和维护技术平台']},
+ kr:{title:'核心资源 Key Resources',desc:'描绘让商业模式运转所必需的最重要资源。',items:['实体资产：生产设施、机器、系统','知识资产：品牌、专利、数据、客户数据库','人力资源：研发团队、技术专家、销售人才','金融资产：现金、信贷额度、融资']},
+ vp:{title:'价值主张 Value Propositions',desc:'描绘为特定客户细分创造价值的系列产品和服务。是客户选择你而非另一个公司的原因。',items:['新颖/性能/定制化/设计/品牌','价格：以更低价格提供同质产品','成本削减：帮客户降本（如国产替代进口→降本）','风险抑制：帮客户抑制风险（如供应链安全）','可达性：让客户接触到之前无法获取的产品']},
+ cr:{title:'客户关系 Customer Relationships',desc:'描绘公司与特定客户细分群体建立的关系类型。',items:['个人助理：基于人际互动的服务','专属个人助理：为每个客户指定专属代表','自助服务/自动化服务','社区：建立客户社区促进交流','共同创造：与客户共同创造产品']},
+ ch:{title:'渠道通路 Channels',desc:'描绘公司如何沟通、接触客户细分而传递价值主张。',items:['自有渠道：直销/自营官网/公众号/抖音','合作伙伴渠道：代理商/展会/行业平台','五个阶段：知名度→评估→购买→交付→售后']},
+ cs:{title:'客户细分 Customer Segments',desc:'描绘企业想要接触和服务的不同人群或组织。客户是任何商业模式的核心。',items:['大众市场：客户有大致相同的需求','利基市场：针对特定利基定制（如供应商→采购商）','区隔化市场：客户需求略有不同，价值主张略有区隔','多元化市场：服务两个完全不同的客户群','多边平台：服务两个以上相互依存的客户群']},
+ cost:{title:'成本结构 Cost Structure',desc:'描绘运营一个商业模式所引发的所有成本。',items:['成本驱动型：聚焦最小化成本（如低成本航空）','价值驱动型：聚焦价值创造而非成本（如奢侈酒店）','固定成本+可变成本+规模经济+范围经济']},
+ rev:{title:'收入来源 Revenue Streams',desc:'描绘公司从每个客户群体中获取的现金收入。',items:['资产销售：卖实体产品（如一台贴片机）','使用收费：按使用量收费','订阅收费：按月/年收费（如设备维护年费）','租赁收费/授权收费/经纪收费/广告收费']},
+};
+
+function showTooltip(e,key){
+ const d=definitions[key];if(!d)return;
+ const tip=document.getElementById('tooltip');
+ let html='<h3>'+d.title+'</h3><p>'+d.desc+'</p><ul>';
+ d.items.forEach(i=>{html+='<li>'+i+'</li>'});
+ html+='</ul>';
+ tip.innerHTML=html;
+ tip.classList.add('show');
+ positionTooltip(e);
+}
+function hideTooltip(){document.getElementById('tooltip').classList.remove('show')}
+function positionTooltip(e){
+ const tip=document.getElementById('tooltip');
+ let x=e.clientX+16,y=e.clientY-10;
+ if(x+500>window.innerWidth)x=e.clientX-510;
+ if(y+350>window.innerHeight)y=e.clientY-360;
+ tip.style.left=x+'px';tip.style.top=y+'px';
+}
+document.addEventListener('mousemove',function(e){
+ const tip=document.getElementById('tooltip');
+ if(tip.classList.contains('show'))positionTooltip(e);
+});
+
+// ====== 双击编辑 ======
+document.querySelectorAll('.editable').forEach(el=>{
+ el.addEventListener('dblclick',function(e){
+  e.stopPropagation();e.preventDefault();
+  if(el.querySelector('input'))return;
+  const orig=el.textContent.trim();
+  const inp=document.createElement('input');
+  inp.type='text';inp.value=orig;inp.className='inline-input';
+  el.textContent='';el.appendChild(inp);
+  inp.focus();inp.select();
+  const save=()=>{const v=inp.value.trim();el.textContent=v||orig;el.classList.add('editable');if(v!==orig)toast('已保存')};
+  const cancel=()=>{el.textContent=orig;el.classList.add('editable')};
+  inp.addEventListener('blur',save);
+  inp.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();inp.blur()}if(ev.key==='Escape'){ev.preventDefault();cancel()}});
+ });
+});
+
+// ====== 导出 ======
+function saveAsHTML(){
+ var html=document.documentElement.outerHTML;
+ var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+ var url=URL.createObjectURL(blob);
+ var a=document.createElement('a');
+ a.href=url;a.download='楚瑞智能科技_商业画布_已修改.html';
+ document.body.appendChild(a);a.click();document.body.removeChild(a);
+ URL.revokeObjectURL(url);
+ toast('已下载修改后的 HTML 文件');
+}
+
+function toast(msg){
+ const t=document.createElement('div');t.className='toast';t.textContent=msg;
+ document.body.appendChild(t);setTimeout(()=>t.remove(),2000);
+}
+</script>
+</body>
+</html>
