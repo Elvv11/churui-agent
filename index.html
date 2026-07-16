@@ -304,6 +304,9 @@ function renderMarkdown(text){
 	  return html;
 	 });
 
+	 // markdown 链接 [文字](URL) → 可点击超链接
+	 text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" style="color:#4f46e5;text-decoration:underline">$1</a>');
+
 	 // 标题和加粗
 	 text = text.replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^### (.+)$/gm,'<h3>$1</h3>')
 	  .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
