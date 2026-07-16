@@ -278,9 +278,12 @@ function renderMarkdown(text){
 	 text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 	 // 处理 markdown 表格 → HTML 表格
-	 text = text.replace(/(?:^\|.+\|$\n?)+/gm, function(tableBlock){
+	 text = text.replace(/(?:^\|?.+\|$\n?)+/gm, function(tableBlock){
 	  var lines = tableBlock.trim().split('\n');
 	  if(lines.length < 2) return tableBlock;
+          // 第二行必须是分隔行（由 |、-、:、空格组成），否则不是表格
+          var sepCheck = lines[1].replace(/\s/g,'');
+          if(!/^[\|:]?[-:\|]+$/.test(sepCheck)) return tableBlock;
 	  var html = '<table style="border-collapse:collapse;width:100%;margin:8px 0;font-size:13px">';
 	  var headerCells = lines[0].split('|').filter(function(c){ return c.trim() !== ''; });
 	  html += '<thead><tr style="background:#eef2ff">';
