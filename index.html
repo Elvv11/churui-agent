@@ -159,12 +159,45 @@ const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 	 t += '你的核心定位：为研发人员提供精准到产品型号、零部件规格、技术参数级别的深度情报，而非泛泛的行业资讯。\n\n';
 	 t += '===== 楚瑞智能科技 · 产品技术知识库 =====\n\n';
 	 // 公司
-	 t += '【公司】' + kb.company.name + '，' + kb.company.founded + '成立，' + kb.company.location + '。自研专利：' + kb.company.selfDevelopedPatents + '。\n\n';
-	 // 核心产品线
+	 // 公司（v3.1.3扩展）
+	 t += '【公司】' + kb.company.name + '，' + kb.company.founded + '成立，' + kb.company.location + '。\n';
+	 if(kb.company.founder) t += '创始人：' + kb.company.founder + '。\n';
+	 if(kb.company.employees) t += '团队：' + kb.company.employees + '。\n';
+	 if(kb.company.coreTeam) t += '核心成员：' + kb.company.coreTeam + '。\n';
+	 if(kb.company.financing) t += '融资：' + kb.company.financing + '。\n';
+	 if(kb.company.ipSummary) t += '知识产权：' + kb.company.ipSummary + '。\n';
+	 if(kb.company.selfDevelopedPatents) t += '核心专利：' + kb.company.selfDevelopedPatents + '。\n';
+	 if(kb.company.revenue) t += '营收：2021年' + kb.company.revenue['2021'] + '万/2022年' + kb.company.revenue['2022'] + '万/2023目标' + kb.company.revenue['2023目标'] + '万。\n';
+	 t += '\n';
+	 // 核心产品线（v3.1.3扩展）
 	 t += '【核心产品线】\n';
 	 kb.products.forEach(function(p,i){
-	  t += (i+1) + '. ' + p.name + '：用于' + p.application + '，替代' + p.replaces + '。';
-	  t += '优势：' + p.advantages + '。' + p.performance + '。\n';
+	  t += (i+1) + '. ' + p.name;
+	  if(p.application) t += '：用于' + p.application;
+	  if(p.maturity) t += '（成熟度：' + p.maturity + '）';
+	  t += '。';
+	  if(p.replaces) t += '替代：' + p.replaces + '。';
+	  if(p.specs) t += '规格：' + p.specs + '。';
+	  if(p.features) t += '特点：' + p.features + '。';
+	  if(p.advantages) t += '优势：' + p.advantages + '。';
+	  if(p.performance) t += '性能：' + p.performance + '。';
+	  if(p.significance) t += '意义：' + p.significance + '。';
+	  if(p.costAdvantage) t += '成本优势：' + p.costAdvantage + '。';
+	  if(p.customerCases) t += '客户案例：' + p.customerCases + '。';
+	  if(p.status) t += '状态：' + p.status + '。';
+	  if(p.applications) t += '应用：' + p.applications + '。';
+	  if(p.model && !p.models) t += '型号：' + p.model + '。';
+	  if(p.models && p.models.length > 0){
+	   t += '\n  型号参数：';
+	   p.models.forEach(function(m){
+	    t += '\n  ' + m.model + ' | 功率' + m.power + ' | 转速' + m.ratedSpeed + '/' + m.maxSpeed + ' | 转矩' + m.ratedTorque + '/' + m.peakTorque + ' | 重量' + m.weight;
+	   });
+	  }
+	  if(p.series && p.series.length > 0){
+	   t += '\n  系列：';
+	   p.series.forEach(function(s){ t += s.name + '(' + s.features + ',' + s.scenario + ') '; });
+	  }
+	  t += '\n';
 	 });
 	 // 上游零部件
 	 t += '\n【上游核心零部件·产品级】\n';
@@ -248,6 +281,8 @@ const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 	 t += '- 招标平台：';
 	 var bpParts = kb.industryResources.biddingPlatforms.map(function(b){ return b.name + '（' + b.url + '）'; });
 	 t += bpParts.join(' | ') + '\n';
+	 // 附加上下文（v3.1.3：行业知识/竞争定位）
+	 if(kb.extraContext) t += '\n' + kb.extraContext;
 	 return t;
 	}
 

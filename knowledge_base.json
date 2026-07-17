@@ -1,100 +1,312 @@
 {
-  "version": "3.1",
+  "version": "3.1.3",
   "lastUpdated": "2026-07-17",
   "description": "楚瑞智能科技贴片机行业情报知识库 - 独立配置文件，直接编辑即可更新Agent知识",
-
   "company": {
     "name": "楚瑞智能科技（苏州）有限公司",
-    "founded": "2021年",
-    "location": "苏州吴江",
-    "selfDevelopedPatents": "高承载自润型滚珠滑轨、电滑环、磁编码盘、磁栅尺位移测量"
+    "founded": "2021年5月7日",
+    "location": "苏州市吴江区江陵街道云创路233号智慧产业园2号楼3楼",
+    "registeredCapital": "1000万元（实缴500万元）",
+    "founder": "卢国友（硕士，山东科技大学计算机应用技术）",
+    "employees": "11人（博士2人、硕士4人、本科5人）",
+    "brand": "smarttechlink",
+    "subsidiaries": "武汉研发中心：楚科云（武汉）科技发展有限公司；协同主体：南京时昌智能科技有限公司（一体化运营）",
+    "coreTeam": "卢国友(运营负责人)、薛庆军(电子机械工程硕士,软件/电子/算法/机械)、黄建恺(电路与系统硕士,微电子/芯片/工艺)、查玉峰(通信与电子系统硕士,长飞光纤总工背景,生产制造)、唐旺旺(电路与系统博士,质量检测/实验室)、杨苹(集成电路设计,实验室专家组)、童春林(机械电子工程,机械研发)、马志晋(机械电子工程,电气研发)",
+    "honors": [
+      "2021年'创客中国'江苏省中小企业创新创业大赛三等奖",
+      "2021年吴江经济开发区崇本科技领军人才",
+      "2022年吴江区创新创业领军人才",
+      "第十届中国创新创业大赛（湖北赛区）总决赛初创组三等奖"
+    ],
+    "ipSummary": "已申请4项发明专利、1项集成电路布图设计、4项软件著作权、6件商标（2件在申请）、参与制定14项团体标准",
+    "financing": "累计投入650万元，正在对接东运创投、苏创投，计划融资1000万元",
+    "revenue": {
+      "2021": 390,
+      "2022": 450,
+      "2023目标": 1300,
+      "2024目标": 2500,
+      "2025目标": 3380,
+      "unit": "万元"
+    },
+    "rdInvestment": {
+      "2021": 510,
+      "2022": 303.48,
+      "unit": "万元"
+    },
+    "selfDevelopedPatents": "发明专利：工程机械角度检测装置(ZL202110562968.3)、基于磁栅尺的位移测量方法及装置(202211575438.3)、非丢精度磁信号编码专用ASIC芯片、用于贴片机的长寿命滚珠滑轨(202211440961.5)；外观专利：滑道安装槽/滑轨/滑块；软著：贴片机Z轴电机驱动软件、高精密微型伺服驱动软件"
   },
-
   "products": [
     {
-      "name": "高承载自润型滚珠滑轨",
-      "application": "贴片机X/Y轴运动平台",
-      "replaces": "THK/NSK同类产品",
-      "advantages": "自润滑免维护、承载刚度提升15%",
-      "performance": "适配高速贴装（0.06s/元件）"
+      "name": "高精密旋转模组贴头（核心在研产品）",
+      "application": "高速高精度贴片机核心贴装模块",
+      "replaces": "西门子(ASM)进口高端贴头",
+      "maturity": "第5级（初样级）",
+      "specs": "贴装精度≤60μm(3σ)，支持0603以下元器件贴装",
+      "features": "含旋转式贴头、轻质直列式贴头，自主研发",
+      "significance": "直接打破国内高端贴片机瓶颈，代替进口高端设备市场"
     },
     {
-      "name": "电滑环",
-      "application": "贴片机旋转工作台/飞达供料器",
-      "replaces": "SMC/日本东方同类产品",
-      "advantages": "支持12~48路信号+功率混合传输",
-      "performance": "寿命>5000万转"
+      "name": "微型高精密伺服电机 CR15系列",
+      "application": "贴片机贴装头Z轴/θ轴驱动",
+      "replaces": "日本松下微型伺服电机",
+      "maturity": "实验室测试阶段，待客户联测",
+      "models": [
+        {
+          "model": "C15-ME0336B",
+          "power": "3W",
+          "ratedSpeed": "3000rpm",
+          "maxSpeed": "6000rpm",
+          "ratedTorque": "0.0095N·m",
+          "peakTorque": "0.0285N·m",
+          "weight": "0.05kg"
+        },
+        {
+          "model": "C15-ME0536B",
+          "power": "5W",
+          "ratedSpeed": "3000rpm",
+          "maxSpeed": "6000rpm",
+          "ratedTorque": "0.0159N·m",
+          "peakTorque": "0.0477N·m",
+          "weight": "0.06kg"
+        },
+        {
+          "model": "C15-ME1036B",
+          "power": "10W",
+          "ratedSpeed": "3000rpm",
+          "maxSpeed": "6000rpm",
+          "ratedTorque": "0.032N·m",
+          "peakTorque": "0.096N·m",
+          "weight": "0.09kg"
+        },
+        {
+          "model": "C15-ME1536B",
+          "power": "15W",
+          "ratedSpeed": "3000rpm",
+          "maxSpeed": "6000rpm",
+          "ratedTorque": "0.0477N·m",
+          "peakTorque": "0.1431N·m",
+          "weight": "0.12kg"
+        }
+      ],
+      "specs": "法兰15mm（业内微型化品类），输入电压DC24V/DC48V，编码器21位（分辨率2,097,152pul/rev），绝缘等级B级，支持SV-NET菊花链连接"
     },
     {
-      "name": "磁编码盘",
-      "application": "贴片机Z轴/θ轴角度反馈",
-      "replaces": "雷尼绍/海德汉同类产品",
-      "advantages": "分辨率可达20bit",
-      "performance": "适配直线电机直驱方案"
+      "name": "微型高精密伺服电机 C20-ME系列",
+      "application": "贴片机中等负载驱动",
+      "replaces": "日本松下伺服电机",
+      "model": "C20-ME0336",
+      "specs": "法兰20mm，额定功率约30W，额定转速3000rpm/最高6000rpm，21位编码器，重量0.19kg"
     },
     {
-      "name": "磁栅尺位移测量系统",
-      "application": "贴片机全闭环位置反馈",
-      "replaces": "海德汉LIP系列",
-      "advantages": "精度±1μm/m",
-      "performance": "支持BISS-C/SSI协议"
+      "name": "定制化微型空心杯伺服电机",
+      "application": "吸嘴气路和电机一体化贴装头",
+      "specs": "长度≤25mm，直径≤8mm，转角精度≤0.15°",
+      "features": "空心轴实现真空气路通过旋转轴中心穿过，FOC精密控制算法，国产MCU+自研电机控制算法"
+    },
+    {
+      "name": "管状直线电机",
+      "application": "新一代高端设备前端模组",
+      "specs": "外径11mm，低负载、短行程、高速度、高精度",
+      "status": "研发验证完成"
+    },
+    {
+      "name": "微型无摩擦滑块（四大系列）",
+      "application": "贴片机X/Y轴运动平台及精密定位",
+      "replaces": "瑞士某公司（全球唯一同类产品，受竞争协议限制国内厂家无法进口）",
+      "maturity": "第8级（产品级）",
+      "series": [
+        {
+          "name": "CR系列",
+          "features": "紧凑型结构，体积小，刚性强",
+          "scenario": "高承载场景"
+        },
+        {
+          "name": "CRQ系列",
+          "features": "高速响应，高动态性能",
+          "scenario": "高频往复运动"
+        },
+        {
+          "name": "CD系列",
+          "features": "微型无摩擦滚珠款，大行程",
+          "scenario": "极小空间精密控制"
+        },
+        {
+          "name": "CDC系列",
+          "features": "摩擦系数极低",
+          "scenario": "对阻力敏感的精密控制"
+        }
+      ],
+      "specs": "最大间隙≤3μm，加工精度<1μm，最大速度1m/s(常规)/3m/s(CRQ)，加速度50m/s²(常规)/300m/s²(CRQ)，温度范围-40℃~+80℃(常规)/-40℃~+150℃(CRQ宽温定制)，真空适配10⁻⁷mbar(CR)/10⁻⁹mbar(CRQ)，全系列支持ISO 6/7级洁净室，CMK测试2.8(西门子设备实测，国外原厂出厂值2.8，12个月后仍保持2.5左右)",
+      "costAdvantage": "制造成本为进口产品的1/3",
+      "customerCases": "CPP/CP20A/CP20P三个型号已在西门子(ASML)贴片机上进行部件更换，供货超12个月"
+    },
+    {
+      "name": "四槽花键丝杆（滚珠花键）",
+      "application": "贴片机贴装头旋转+直线复合运动，无缝对接雅马哈YS12直列贴装头",
+      "replaces": "日本THK、IKO（国内轴径5mm以内微型滚珠花键基本全进口）",
+      "maturity": "第8级（产品级）",
+      "specs": "最大间隙≤3μm，加工精度<1μm，花键外径≤9mm，2槽/4槽可选",
+      "features": "对称结构折返滑道设计",
+      "costAdvantage": "成本为进口的1/2",
+      "applications": "松下、雅马哈贴片机部件更换"
+    },
+    {
+      "name": "自适应光栅编码芯片及模组",
+      "application": "贴片机角度/位置反馈",
+      "maturity": "第3级（仿真级）",
+      "specs": "平行栅≥15μm，自适应三种以上光栅",
+      "features": "自主研发全新对光栅结构，一个光隔对应光影旋转一圈，易实现正交编码输出；栅格丢失不影响检测结果，加工成本低、工艺简单"
+    },
+    {
+      "name": "海尔贝克磁环",
+      "application": "伺服电机组件",
+      "specs": "两极/四极，强度达400mt（4极）"
     }
   ],
-
   "upstreamComponents": [
     {
       "category": "导轨",
       "suppliers": [
-        {"brand": "THK", "region": "日本", "marketShare": "~35%", "mainModels": "SHS/SSR系列"},
-        {"brand": "NSK", "region": "日本", "mainModels": "NH/LA系列"},
-        {"brand": "上银", "region": "台湾", "mainModels": "HG系列"},
-        {"brand": "博世力士乐", "region": "德国", "mainModels": "滚柱导轨"}
+        {
+          "brand": "THK",
+          "region": "日本",
+          "marketShare": "~35%",
+          "mainModels": "SHS/SSR系列"
+        },
+        {
+          "brand": "NSK",
+          "region": "日本",
+          "mainModels": "NH/LA系列"
+        },
+        {
+          "brand": "上银",
+          "region": "台湾",
+          "mainModels": "HG系列"
+        },
+        {
+          "brand": "博世力士乐",
+          "region": "德国",
+          "mainModels": "滚柱导轨"
+        }
       ]
     },
     {
       "category": "伺服电机",
       "suppliers": [
-        {"brand": "发那科", "region": "日本", "mainModels": "αi/βi系列", "note": "贴片机主力"},
-        {"brand": "安川", "region": "日本", "mainModels": "Σ-7/Σ-X系列"},
-        {"brand": "松下", "region": "日本", "mainModels": "MINAS A6系列"},
-        {"brand": "汇川", "region": "国产", "mainModels": "SV660系列", "note": "对标安川"},
-        {"brand": "禾川", "region": "国产", "mainModels": "SV-X系列"}
+        {
+          "brand": "发那科",
+          "region": "日本",
+          "mainModels": "αi/βi系列",
+          "note": "贴片机主力"
+        },
+        {
+          "brand": "安川",
+          "region": "日本",
+          "mainModels": "Σ-7/Σ-X系列"
+        },
+        {
+          "brand": "松下",
+          "region": "日本",
+          "mainModels": "MINAS A6系列"
+        },
+        {
+          "brand": "汇川",
+          "region": "国产",
+          "mainModels": "SV660系列",
+          "note": "对标安川"
+        },
+        {
+          "brand": "禾川",
+          "region": "国产",
+          "mainModels": "SV-X系列"
+        }
       ]
     },
     {
       "category": "光栅尺",
       "suppliers": [
-        {"brand": "海德汉", "region": "德国", "mainModels": "LIP 200系列", "specs": "精度±0.5μm"},
-        {"brand": "雷尼绍", "region": "英国", "mainModels": "RESOLUTE系列", "specs": "分辨率1nm"},
-        {"brand": "Magnescale", "region": "日本", "mainModels": "SR系列", "specs": "耐油污"}
+        {
+          "brand": "海德汉",
+          "region": "德国",
+          "mainModels": "LIP 200系列",
+          "specs": "精度±0.5μm"
+        },
+        {
+          "brand": "雷尼绍",
+          "region": "英国",
+          "mainModels": "RESOLUTE系列",
+          "specs": "分辨率1nm"
+        },
+        {
+          "brand": "Magnescale",
+          "region": "日本",
+          "mainModels": "SR系列",
+          "specs": "耐油污"
+        }
       ]
     },
     {
       "category": "工业相机",
       "suppliers": [
-        {"brand": "索尼", "region": "日本", "mainModels": "IMX系列全局快门传感器"},
-        {"brand": "基恩士", "region": "日本", "mainModels": "CV-X系列", "note": "内置AI检测"},
-        {"brand": "海康机器人", "region": "国产", "mainModels": "CH系列"}
+        {
+          "brand": "索尼",
+          "region": "日本",
+          "mainModels": "IMX系列全局快门传感器"
+        },
+        {
+          "brand": "基恩士",
+          "region": "日本",
+          "mainModels": "CV-X系列",
+          "note": "内置AI检测"
+        },
+        {
+          "brand": "海康机器人",
+          "region": "国产",
+          "mainModels": "CH系列"
+        }
       ]
     },
     {
       "category": "气动元件",
       "suppliers": [
-        {"brand": "SMC", "region": "日本", "mainModels": "CQ2/MGPM系列", "note": "贴片机气路主力"},
-        {"brand": "Festo", "region": "德国", "mainModels": "DNGC/DSBC系列"},
-        {"brand": "亚德客", "region": "国产", "note": "性价比替代"}
+        {
+          "brand": "SMC",
+          "region": "日本",
+          "mainModels": "CQ2/MGPM系列",
+          "note": "贴片机气路主力"
+        },
+        {
+          "brand": "Festo",
+          "region": "德国",
+          "mainModels": "DNGC/DSBC系列"
+        },
+        {
+          "brand": "亚德客",
+          "region": "国产",
+          "note": "性价比替代"
+        }
       ]
     },
     {
       "category": "飞达(Feeder)",
       "suppliers": [
-        {"brand": "松下", "region": "日本", "specs": "电动飞达,精度±0.02mm"},
-        {"brand": "雅马哈", "region": "日本", "mainModels": "ZS送料器"},
-        {"brand": "环球仪器", "region": "美国"}
+        {
+          "brand": "松下",
+          "region": "日本",
+          "specs": "电动飞达,精度±0.02mm"
+        },
+        {
+          "brand": "雅马哈",
+          "region": "日本",
+          "mainModels": "ZS送料器"
+        },
+        {
+          "brand": "环球仪器",
+          "region": "美国"
+        }
       ]
     }
   ],
-
   "competitors": {
     "domestic": [
       {
@@ -103,11 +315,29 @@
         "selfDevelopRate": ">98%",
         "ipCount": "176项",
         "flagshipModels": [
-          {"model": "LY-CP860", "type": "高速泛用", "speed": "0.06s/元件", "accuracy": "±0.03mm"},
-          {"model": "LY-BS860", "type": "磁悬浮直线驱动", "acceleration": "2.5G"}
+          {
+            "model": "LY-CP860",
+            "type": "高速泛用",
+            "speed": "0.06s/元件",
+            "accuracy": "±0.03mm"
+          },
+          {
+            "model": "LY-BS860",
+            "type": "磁悬浮直线驱动",
+            "acceleration": "2.5G"
+          }
         ],
         "technologies": "线扫视觉飞拍技术（飞行中对中,效率提升30%）",
-        "keyCustomers": ["华为(5G基站板)", "TCL(家电控制板)", "格力(空调变频板)", "富士康(苹果代工产线)", "丰田(车载电子)", "中国电科", "中国航天"]
+        "keyCustomers": [
+          "丰田(车载电子)",
+          "中国航天",
+          "华为(5G基站板)",
+          "中国电科",
+          "富士康(苹果代工产线)",
+          "TCL(家电控制板)",
+          "济南翼菲科技(高速高精度贴装设备合作)",
+          "格力(空调变频板)"
+        ]
       },
       {
         "name": "易通自动化",
@@ -115,10 +345,22 @@
         "selfDevelopRate": "99%+",
         "ipCount": "240+项",
         "flagshipModels": [
-          {"model": "ET-2000", "type": "群取群贴全球首创", "features": "12吸嘴同时取料,效率2倍于单头"},
-          {"model": "ET-800", "type": "六头泛用", "accuracy": "±0.025mm"}
+          {
+            "model": "ET-2000",
+            "type": "群取群贴全球首创",
+            "features": "12吸嘴同时取料,效率2倍于单头"
+          },
+          {
+            "model": "ET-800",
+            "type": "六头泛用",
+            "accuracy": "±0.025mm"
+          }
         ],
-        "keyCustomers": ["比亚迪(新能源汽车电子)", "中国航发", "中国电子"]
+        "keyCustomers": [
+          "比亚迪(新能源汽车电子)",
+          "中国航发",
+          "中国电子"
+        ]
       },
       {
         "name": "木几智能",
@@ -126,75 +368,335 @@
         "selfDevelopRate": ">96%",
         "ipCount": "100+项",
         "flagshipModels": [
-          {"model": "M6系列", "type": "首创国产飞行相机对中", "accuracy": "±0.035mm"}
+          {
+            "model": "M6系列",
+            "type": "首创国产飞行相机对中",
+            "accuracy": "±0.035mm"
+          }
         ],
         "achievements": "主导首个贴片机国标(GB/T 40574-2021)",
-        "keyCustomers": ["立讯精密(连接器SMT)", "比亚迪", "美的(家电控制板)", "欧普(照明LED)"]
+        "keyCustomers": [
+          "立讯精密(连接器SMT)",
+          "比亚迪",
+          "美的(家电控制板)",
+          "欧普(照明LED)"
+        ]
       }
     ],
     "international": [
-      {"name": "ASM", "region": "德国(原西门子)", "flagshipSeries": "SIPLACE系列", "globalShare": "~20%", "maxSpeed": "150,000cph"},
-      {"name": "松下", "region": "日本", "flagshipSeries": "NPM系列", "globalShare": "~18%", "note": "NPM-D3精度±0.025mm"},
-      {"name": "富士", "region": "日本", "flagshipSeries": "NXT系列", "globalShare": "~15%", "note": "模组化设计"},
-      {"name": "雅马哈", "region": "日本", "flagshipSeries": "YSM系列", "globalShare": "~12%", "maxSpeed": "200,000cph(YSM40R)"}
-    ]
+      {
+        "name": "ASM",
+        "region": "德国(原西门子)",
+        "flagshipSeries": "SIPLACE系列",
+        "globalShare": "~20%",
+        "maxSpeed": "150,000cph"
+      },
+      {
+        "name": "松下",
+        "region": "日本",
+        "flagshipSeries": "NPM系列",
+        "globalShare": "~18%",
+        "note": "NPM-D3精度±0.025mm"
+      },
+      {
+        "name": "富士",
+        "region": "日本",
+        "flagshipSeries": "NXT系列",
+        "globalShare": "~15%",
+        "note": "模组化设计"
+      },
+      {
+        "name": "雅马哈",
+        "region": "日本",
+        "flagshipSeries": "YSM系列",
+        "globalShare": "~12%",
+        "maxSpeed": "200,000cph(YSM40R)"
+      }
+    ],
+    "chuRuiPosition": {
+      "sliderVsSwiss": "已量产，进入西门子售后市场，成本为进口1/3",
+      "splineVsTHK_IKO": "已量产，用于雅马哈/松下设备，成本为进口1/2",
+      "servoMotorVsPanasonic": "实验室测试阶段，待客户联测",
+      "placementHeadVsSiemens": "在研（初样级），目标替代西门子ASM高端贴头",
+      "encoderVsForeign": "仿真级，自适应光栅编码芯片在研"
+    }
   },
-
   "downstreamApplications": [
-    {"industry": "3C电子", "share": "38%", "typicalProducts": "智能手机主板(01005元件,0.3mm pitch BGA)、平板/笔电主板", "requirements": "高精度±0.025mm+高速"},
-    {"industry": "汽车电子", "share": "24%", "cagr": "15-18%", "typicalProducts": "ECU引擎控制单元、BMS电池管理、ADAS自动驾驶域控", "requirements": "车规级可靠性(-40~125°C)、可追溯性"},
-    {"industry": "通信", "share": "18%", "typicalProducts": "5G基站AAU/BBU板、光模块", "requirements": "大尺寸板(>600mm)、混装工艺"},
-    {"industry": "半导体", "share": "48→112亿美元", "note": "封测SMT", "typicalProducts": "SiP系统级封装、Flip-Chip倒装焊", "requirements": "±0.01mm超高精度、氮气回流"},
-    {"industry": "新能源", "share": "80→185亿元", "typicalProducts": "IGBT功率模块、光伏逆变器、储能BMS", "requirements": "厚铜板(>4oz)、铝基板散热工艺"},
-    {"industry": "LED", "share": "8%", "typicalProducts": "MiniLED背光板(尺寸<200μm)、COB封装", "requirements": "超高密度贴装"},
-    {"industry": "医疗军工", "share": "12%", "typicalProducts": "CT球管控制板、起搏器、相控阵雷达T/R组件", "requirements": "高可靠性+清洗工艺"}
+    {
+      "industry": "3C电子",
+      "share": "38%",
+      "typicalProducts": "智能手机主板(01005元件,0.3mm pitch BGA)、平板/笔电主板",
+      "requirements": "高精度±0.025mm+高速"
+    },
+    {
+      "industry": "汽车电子",
+      "share": "24%",
+      "cagr": "15-18%",
+      "typicalProducts": "ECU引擎控制单元、BMS电池管理、ADAS自动驾驶域控",
+      "requirements": "车规级可靠性(-40~125°C)、可追溯性"
+    },
+    {
+      "industry": "通信",
+      "share": "18%",
+      "typicalProducts": "5G基站AAU/BBU板、光模块",
+      "requirements": "大尺寸板(>600mm)、混装工艺"
+    },
+    {
+      "industry": "半导体",
+      "share": "48→112亿美元",
+      "note": "封测SMT",
+      "typicalProducts": "SiP系统级封装、Flip-Chip倒装焊",
+      "requirements": "±0.01mm超高精度、氮气回流"
+    },
+    {
+      "industry": "新能源",
+      "share": "80→185亿元",
+      "typicalProducts": "IGBT功率模块、光伏逆变器、储能BMS",
+      "requirements": "厚铜板(>4oz)、铝基板散热工艺"
+    },
+    {
+      "industry": "LED",
+      "share": "8%",
+      "typicalProducts": "MiniLED背光板(尺寸<200μm)、COB封装",
+      "requirements": "超高密度贴装"
+    },
+    {
+      "industry": "医疗军工",
+      "share": "12%",
+      "typicalProducts": "CT球管控制板、起搏器、相控阵雷达T/R组件",
+      "requirements": "高可靠性+清洗工艺"
+    },
+    {
+      "industry": "先进封装(半导体中道)",
+      "share": "全球475亿美元(2026E),中国1,137亿元(2025E)",
+      "cagr": "全球7.7%,中国29.9%",
+      "typicalProducts": "SiP系统级封装、3D堆叠、TSV硅通孔、FC倒装焊、Fan-out扇出型封装、Chiplet",
+      "requirements": "±0.01mm超高精度、混合键合对准精度<1μm、氮气/真空环境"
+    }
   ],
-
   "marketData": {
-    "marketSize": "301.97亿元(2024年中国SMT设备市场)",
-    "importRatio": "74%进口自日本/德国",
-    "localizationRate": "35→52%(2020→2026E)",
-    "tradeDeficit": "~27亿美元",
-    "keyTrend": "高端机型仍依赖进口，国产在中低端/泛用机突破明显"
+    "marketSize": "国内贴片机市场175亿元/年(年需求约39,686台,进口占比88%以上)；半导体高精密部件198亿元(2019)→282亿元(2023E),CAGR 9.3%；高精密伺服电机28.3亿元(2021)→38.2亿元(2025E),CAGR 7.7%；SMT贴头142.7亿元(2021)→204.9亿元(2026E),CAGR 7.5%",
+    "importRatio": "旋转式贴头高速贴片机100%依赖进口；高速自动贴片机进口依赖度88%以上；封装设备国产化率不超过5%",
+    "localizationRate": "半导体设备整体国产化率约20%(2023)；封装设备国产化率<5%；核心部件(微型滚珠花键/滑块/伺服电机)基本全进口",
+    "tradeDeficit": "先进封装设备国产化几乎空白",
+    "keyTrend": "高端机型仍依赖进口，国产在中低端突破明显；先进封装设备国产化几乎空白是最大机会窗口。全球半导体设备1,090亿美元(2024E),中国占比32%(超350亿美元),2025E达1,280亿美元。中国大陆2024年新投产18座晶圆厂。"
   },
-
   "policies": [
-    {"name": "工信部2026设备更新补贴", "detail": "补贴15%，门槛100万，SMT贴片机属适配设备"},
-    {"name": "江苏省智改数转三年行动计划", "detail": "SMT产线升级补贴最高500万"}
+    {
+      "name": "工信部2026设备更新补贴",
+      "detail": "补贴15%，门槛100万，SMT贴片机属适配设备"
+    },
+    {
+      "name": "江苏省智改数转三年行动计划",
+      "detail": "SMT产线升级补贴最高500万"
+    },
+    {
+      "name": "大基金三期",
+      "detail": "启航，着眼长效目标解决半导体'卡脖子'问题"
+    },
+    {
+      "name": "美国FDPR长臂管辖（外部压力）",
+      "detail": "美国拟实施外国直接产品规则，长臂管辖日、荷半导体设备企业对华出口（东京电子、ASML等），设备国产化有望加速"
+    },
+    {
+      "name": "美国对华AI和芯片投资限制（2024年6月）",
+      "detail": "美国限制对中国AI和芯片领域投资，进一步倒逼国产替代"
+    },
+    {
+      "name": "韩国半导体产业扶持",
+      "detail": "2024年7月提供26万亿韩元半导体产业扶持资金"
+    },
+    {
+      "name": "中国新型电力系统建设",
+      "detail": "加速推进，核电长期景气"
+    },
+    {
+      "name": "低空经济政策",
+      "detail": "低空经济政策催化不断"
+    }
   ],
-
   "targetCustomers": [
-    {"name": "纽威数控", "annualPurchase": "海德汉光栅尺2527万+NSK导轨2820万", "opportunity": "楚瑞磁栅尺+自润滑轨替代机会"},
-    {"name": "先导智能", "note": "锂电设备龙头", "annualPurchase": "年采SMT设备~8000万", "painPoints": "大量使用安川伺服+THK导轨"},
-    {"name": "迈为科技", "note": "光伏HJT设备龙头", "annualPurchase": "高精度运动平台年采购~5000万"},
-    {"name": "汇川技术", "note": "伺服龙头", "opportunity": "SCARA机器人+运动控制，潜在联合开发伙伴"},
-    {"name": "中微公司/盛美半导体", "note": "半导体设备", "opportunity": "对超高精度磁栅尺有需求"},
-    {"name": "联影医疗", "annualPurchase": "CT/MR设备滑环年采购~3000万", "opportunity": "直接竞品领域"},
-    {"name": "海天国际", "note": "注塑机万台级", "annualPurchase": "滚珠丝杠/滑轨年采过亿", "painPoints": "液压→电动转型中"}
+    {
+      "name": "西门子(ASML)",
+      "note": "贴片机部件更换售后市场",
+      "annualPurchase": "滑块CPP/CP20A/CP20P已供货超12个月",
+      "opportunity": "楚瑞微型无摩擦滑块已进入其供应链（售后维保市场）"
+    },
+    {
+      "name": "华为",
+      "note": "半导体贴装设备使用商+制造商（联合测试中）",
+      "opportunity": "5G基站板贴装设备+先进封装，双重需求"
+    },
+    {
+      "name": "烽火通信",
+      "note": "半导体贴装设备使用商",
+      "opportunity": "创始人出自烽火，关系深厚"
+    },
+    {
+      "name": "海康威视",
+      "note": "半导体贴装设备使用商",
+      "opportunity": "安防摄像头模组SMT产线"
+    },
+    {
+      "name": "大华股份",
+      "note": "半导体贴装设备使用商",
+      "opportunity": "同海康，安防SMT产线需求"
+    },
+    {
+      "name": "青岛鼎新",
+      "note": "半导体贴装设备使用商"
+    },
+    {
+      "name": "浙江华企正邦",
+      "note": "半导体贴装设备制造商（联合测试中）"
+    },
+    {
+      "name": "广州路远",
+      "note": "贴片机制造商（联合测试中）",
+      "opportunity": "国产贴片机龙头，楚瑞伺服电机/滑块潜在配套"
+    },
+    {
+      "name": "济南翼菲科技",
+      "note": "高速高精度贴装设备合作方"
+    },
+    {
+      "name": "纽威数控",
+      "annualPurchase": "年采海德汉光栅尺2527万+NSK导轨2820万",
+      "opportunity": "楚瑞磁栅尺+自润滑轨替代机会"
+    },
+    {
+      "name": "先导智能",
+      "note": "锂电设备龙头",
+      "annualPurchase": "年采SMT设备~8000万",
+      "painPoints": "大量使用安川伺服+THK导轨"
+    },
+    {
+      "name": "迈为科技",
+      "note": "光伏HJT设备龙头",
+      "annualPurchase": "高精度运动平台年采购~5000万"
+    },
+    {
+      "name": "汇川技术",
+      "note": "伺服龙头",
+      "opportunity": "SCARA机器人+运动控制，潜在联合开发伙伴"
+    },
+    {
+      "name": "联影医疗",
+      "annualPurchase": "CT/MR设备滑环年采购~3000万",
+      "opportunity": "直接竞品领域，高端医疗设备精密部件"
+    },
+    {
+      "name": "海天国际",
+      "note": "注塑机万台级",
+      "annualPurchase": "滚珠丝杠/滑轨年采过亿",
+      "painPoints": "液压→电动转型中"
+    }
   ],
-
   "industryResources": {
     "exhibitions": [
-      {"name": "NEPCON China", "description": "亚洲电子展", "location": "上海", "schedule": "每年4月"},
-      {"name": "慕尼黑上海电子生产设备展", "location": "上海", "schedule": "每年3月"},
-      {"name": "CEF中国电子展", "location": "深圳/上海", "schedule": "每年11月"},
-      {"name": "CIEME中国国际装备制造业博览会", "location": "沈阳", "schedule": "每年9月"}
+      {
+        "name": "NEPCON China",
+        "description": "亚洲电子展",
+        "location": "上海",
+        "schedule": "每年4月"
+      },
+      {
+        "name": "慕尼黑上海电子生产设备展",
+        "location": "上海",
+        "schedule": "每年3月"
+      },
+      {
+        "name": "CEF中国电子展",
+        "location": "深圳/上海",
+        "schedule": "每年11月"
+      },
+      {
+        "name": "CIEME中国国际装备制造业博览会",
+        "location": "沈阳",
+        "schedule": "每年9月"
+      }
     ],
     "media": [
-      {"name": "SMT China表面组装技术", "url": "smtchina.com"},
-      {"name": "中国传动网", "url": "chuandong.com"},
-      {"name": "高工LED", "url": "gg-led.com"},
-      {"name": "SEMI中国", "url": "semichina.org"}
+      {
+        "name": "SMT China表面组装技术",
+        "url": "smtchina.com"
+      },
+      {
+        "name": "中国传动网",
+        "url": "chuandong.com"
+      },
+      {
+        "name": "高工LED",
+        "url": "gg-led.com"
+      },
+      {
+        "name": "SEMI中国",
+        "url": "semichina.org"
+      }
     ],
     "dataSources": [
-      {"name": "巨潮资讯网", "url": "cninfo.com.cn", "description": "上市公司年报/招股书"},
-      {"name": "国家知识产权局", "url": "cnipa.gov.cn", "description": "专利检索"},
-      {"name": "企查查", "url": "qcc.com"}
+      {
+        "name": "巨潮资讯网",
+        "url": "cninfo.com.cn",
+        "description": "上市公司年报/招股书"
+      },
+      {
+        "name": "国家知识产权局",
+        "url": "cnipa.gov.cn",
+        "description": "专利检索"
+      },
+      {
+        "name": "企查查",
+        "url": "qcc.com"
+      }
     ],
     "biddingPlatforms": [
-      {"name": "中国招标投标公共服务平台", "url": "ctbpsp.com"},
-      {"name": "中国政府采购网", "url": "ccgp.gov.cn"},
-      {"name": "千里马招标网", "url": "qianlima.com"}
+      {
+        "name": "中国招标投标公共服务平台",
+        "url": "ctbpsp.com"
+      },
+      {
+        "name": "中国政府采购网",
+        "url": "ccgp.gov.cn"
+      },
+      {
+        "name": "千里马招标网",
+        "url": "qianlima.com"
+      }
     ]
-  }
+  },
+  "industryKnowledge": {
+    "semiconductorChain": "设计 → 晶圆制造（前道） → 封装测试（后道）。先进封装处于前道与后道之间的'中道'区域。中国大陆全球晶圆生产份额约19%，其中本土企业仅11%。",
+    "packagingEvolution": "五大阶段：①1970s前通孔插装(DIP) → ②1980s表面贴装(SOP/QFP) → ③1990s球栅阵列(BGA/CSP) → ④20世纪末晶圆级封装(WLP)/多芯片组(MCM) → ⑤21世纪系统级封装(SiP)/3D堆叠/TSV/FC/Fan-out",
+    "advancedPackagingTech": {
+      "倒装FC": {
+        "function": "芯片翻转焊接",
+        "keyEquipment": "植球机、回流焊"
+      },
+      "凸块Bumping": {
+        "function": "制作连接凸点",
+        "keyEquipment": "光刻、电镀"
+      },
+      "重布线RDL": {
+        "function": "改变IC接点位置",
+        "keyEquipment": "光刻机、涂胶显影"
+      },
+      "硅通孔TSV": {
+        "function": "纵向垂直互连",
+        "keyEquipment": "深孔刻蚀、PVD、CVD、铜填充、CMP"
+      },
+      "晶圆级封装WLP": {
+        "function": "整片晶圆封装后切割",
+        "keyEquipment": "与前道设备相似"
+      },
+      "混合键合HB": {
+        "function": "铜触点直接键合",
+        "keyEquipment": "高精度键合机"
+      }
+    },
+    "packagingEquipmentLandscape": "减薄机:DISCO/东京精密(70-90%),国产华海清科/迈为/晶盛机电；划片机:DISCO(70-90%),国产光力/大族/德龙；固晶机:Besi/ASM(60%),国产新益昌/快克；键合机:K&S/ASM(80%),国产奥特维/拓荆；封装设备整体国产化率不超过5%",
+    "aiAndAdvancedPackaging": "AI推动HBM需求旺盛，2024-2026年AI服务器出货量维持20-30%高增速。关键材料：Low α球硅/球铝(联瑞新材)、GMC封装材料、环氧塑封料。台积电2nm制程2025年量产，Chiplet技术加速渗透。",
+    "smtIndustryNote": "贴片机是SMT生产线中最关键、最复杂的设备。国内从事SMT设备研发的企业规模小、技术水平低，主要是经济型/LED贴片机。ASM PACIFIC：全球封装设备第一、SMT设备第二、封装物料第三(2021年数据)。"
+  },
+  "extraContext": "【公司详情补充】\n创始人卢国友，山东科技大学计算机应用技术硕士。2004-2008烽火科技研发二层交换机；2008-2019联合创立武汉思非电子，研发视音频板卡；2019-2021创立楚科云(武汉)，2020年销售收入1492万元；2021至今创立楚瑞智能，聚焦半导体设备精密部件国产化。\n核心团队：卢国友(运营)、薛庆军(软件/电子/算法/机械硕士)、黄建恺(微电子/芯片/工艺硕士)、查玉峰(生产制造,长飞光纤总工背景)、唐旺旺(质量检测/实验室博士)、杨苹(集成电路设计)、童春林(机械研发)、马志晋(电气研发)。\n资质：2021创客中国江苏省三等奖、2021-2022吴江区领军人才、第十届中国创新创业大赛湖北赛区三等奖。\nIP：4项发明专利(工程机械角度检测/ZL202110562968.3、磁栅尺位移测量/202211575438.3、非丢精度磁信号编码ASIC芯片、贴片机长寿命滚珠滑轨/202211440961.5)、1项集成电路布图设计、4项软著、6件商标、参与制定14项团体标准。\n融资：累计投入650万元，计划融资1000万元(对接东运创投、苏创投)。\n财务：2021年收入390万/研发510万，2022年收入450万/研发303万，2023目标1300万，2024目标2500万，2025目标3380万。\n\n【竞争定位·楚瑞智能 vs 国际巨头】\n- 高精密滑块：楚瑞已量产(第8级产品级)，替代瑞士某公司(全球唯一同类产品)，成本为进口1/3。CPP/CP20A/CP20P已在西门子(ASML)供货超12个月。\n- 微型滚珠花键：已量产(第8级)，替代日本THK/IKO(国内5mm以下全进口)，成本为进口1/2。用于雅马哈YS12、松下贴片机。\n- 微型伺服电机CR15/C20-ME系列：实验室测试阶段，替代日本松下。法兰15mm(业内最小)，21位编码器。\n- 旋转式贴头模组：在研(第5级初样级)，替代西门子ASM。贴装精度≤60μm(3σ)，支持0603以下元器件。\n- 自适应光栅编码芯片：第3级仿真级，自主研发全新对光栅结构，栅格丢失不影响检测。\n- 管状直线电机：研发验证完成，外径11mm。\n\n【先进封装行业知识】\n半导体产业链：设计→晶圆制造(前道)→封装测试(后道)。先进封装处于\"中道\"。中国大陆全球晶圆生产份额约19%(本土企业仅11%)。\n封装技术演进五大阶段：DIP→SOP/QFP→BGA/CSP→WLP/MCM→SiP/3D堆叠/TSV/FC/Fan-out。\n六大先进封装技术：倒装FC(植球+回流焊)、凸块Bumping(光刻+电镀)、重布线RDL(光刻机+涂胶显影)、硅通孔TSV(深孔刻蚀+PVD+CVD+铜填充+CMP)、晶圆级封装WLP(与前道设备相似)、混合键合HB(高精度键合机)。\n封装设备格局：减薄机(DISCO/东京精密70-90%,国产华海清科/迈为/晶盛机电)、划片机(DISCO 70-90%,国产光力/大族/德龙)、固晶机(Besi/ASM 60%,国产新益昌/快克)、键合机(K&S/ASM 80%,国产奥特维/拓荆)。封装设备国产化率不超过5%。\n全球先进封装：304亿美元(2020,占封装45%)→475亿美元(2026E,占50%),CAGR 7.7%。中国先进封装：351.3亿元(2020,仅14%)→1,137亿元(2025E,32%),CAGR 29.9%。\nAI推动HBM需求旺盛，2024-2026年AI服务器出货量维持20-30%高增速。台积电2nm制程2025年量产，Chiplet技术加速渗透。\n贴片机行业：贴片机是SMT产线最核心设备。国内SMT设备企业规模小、技术水平低(主要是经济型/LED贴片机)。ASM PACIFIC：全球封装设备第一、SMT设备第二、封装物料第三(2021年)。"
 }
