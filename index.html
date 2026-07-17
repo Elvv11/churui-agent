@@ -337,17 +337,85 @@ async function loadSharedFacts(){
 
 // ====== 学习并共享（云端） ======
 async function learnAndShare(question, answer){
- if(!userName) return;
- // 提取包含关键数据模式的句子
- const keySentences = answer.match(/[^。！？\n]+(?:亿[元美元]|万[台个]|%\s*[以左]|家企业|家客户|供应商|型号|系列|精度|速度|分辨率|参数|关键|核心|龙头|替代|对标)[^。！？\n]*/g);
- if(!keySentences) return;
- for(const s of keySentences){
-  if(s.length < 10 || s.length > 300) continue;
-  try {
-   await supabasePost({ user_name: userName, data_type: 'fact', content: { text: s.trim(), source: question.slice(0,100) } });
-  } catch(e){}
- }
-}
+	 if(!userName) return;
+
+	 // ====== v3.1.2 增强学习正则 ======
+	 // 以下关键词数组可按需增减
+	 var LEARN_KEYWORDS = [
+	  // ---- 第一类：技术参数单位 ----
+	  '[±＋－]\\s*\\d',       // 公差/精度值 ±0.03mm
+	  '\\d+\\s*bit',           // 编码器分辨率 23bit
+	  '\\d+\\s*cph',           // 贴装速度 150,000cph
+	  '\\d+\\.?\\d*\\s*[Gg]',  // 加速度 2.5G
+	  '\\d+\\s*万转',          // 寿命 >5000万转
+	  '\\d+\\s*[路通道]',      // 通道数 12路
+	  '\\d+\\s*oz',            // 铜厚 >4oz
+	  '\\d+\\s*[μu微][m米]', // 精度 <200μm
+	  '间距',                       // 引脚间距 pitch
+	  '扭矩',                       // 扭矩 N·m
+	  '\\d+\\s*[Nn][·\\.]?[mM]', // 扭矩值 5N·m
+	  '\\d+\\s*[kKmM]?[Ww]\\b',  // 功率 750W
+	  '\\d+\\s*[kKmM]?[Hh]z\\b', // 频率 20kHz
+	  // ---- 第二类：协议与标准 ----
+	  'EtherCAT', 'PROFINET', 'Mechatrolink', 'CANopen', 'Modbus',
+	  'BISS', 'SSI', 'EnDat', 'Hyperface',
+	  'GB/T', 'ISO', 'IEC', 'UL认证', 'CE认证', 'CCC认证',
+	  '车规级', '工规级', '军工级',
+	  '协议', '接口标准',
+	  // ---- 第三类：产品标识 ----
+	  '料号', '编号', '规格书', '型号', '系列',
+	  // ---- 第四类：供应链与商务 ----
+	  '年采购', '年采', '采购额', '采购量',
+	  '交期', '货期', 'lead\\s*time',
+	  '月产能', '年产能', '产能',
+	  '单价', '报价', '含税', '不含税',
+	  '国产化率', '市占率', '市场份额',
+	  '一级代理', '总代理', '经销商', '渠道',
+	  '现货', '期货', '库存',
+	  '供应商',
+	  // ---- 第五类：工艺参数 ----
+	  '回流焊', '波峰焊', '选择焊',
+	  '倒装焊', 'Flip[\\.\\s]?Chip', 'SiP', 'BGA', 'QFN', 'QFP', 'SOP', 'LGA',
+	  '混装', '红胶', '锡膏',
+	  '飞拍', '对中', '飞行相机',
+	  '贴装', '贴片', 'SMT', 'DIP', 'THT',
+	  '封装', '封测',
+	  '清洗工艺', '点胶', '涂覆', '灌封',
+	  '氮气回流', '无铅焊接', '有铅焊接',
+	  // ---- 第六类：公司动作 ----
+	  '发布', '推出', '发布上市',
+	  '中标', '中标金额', '中标项目',
+	  '导入', '切换', '替换', '更换',
+	  '涨价', '降价', '调价',
+	  '签约', '战略合作', '达成合作',
+	  '扩产', '扩线', '增产',
+	  // ---- 第七类：时间与阶段 ----
+	  '量产', '批量生产', '小批量', '试产', '打样', '送样',
+	  'Q[1-4]', '季度',
+	  '截至', '截止',
+	  '预计\\d', '计划\\d', '目标\\d',
+	  // ---- 第八类：楚瑞自身 ----
+	  '楚瑞',
+	  // ---- 原有保留 ----
+	  '亿[元美元]', '万[台个]', '%\\s*[以左]',
+	  '家企业', '家客户',
+	  '精度', '速度', '分辨率', '参数',
+	  '关键', '核心', '龙头', '替代', '对标'
+	 ];
+
+	 var LEARN_REGEX = new RegExp('[^。！？\\n]+(?:' + LEARN_KEYWORDS.join('|') + ')[^。！？\\n]*', 'g');
+	 var keySentences = answer.match(LEARN_REGEX);
+
+	 if(!keySentences) return;
+	 for(var i = 0; i < keySentences.length; i++){
+	  var s = keySentences[i];
+	  if(s.length < 10 || s.length > 300) continue;
+	  try {
+	   supabasePost({ user_name: userName, data_type: 'fact', content: { text: s.trim(), source: question.slice(0,100) } }).catch(function(){});
+	  } catch(e){}
+	 }
+	}
+
 
 // ====== AI 调用 ======
 let isGenerating = false;
