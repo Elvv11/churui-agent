@@ -169,6 +169,138 @@ const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 // ====== SerpAPI (百度搜索引擎) ======
 const SERPAPI_KEY = '473a0fd9c31758cb79402d2b22094c9b7e3b55333801380cb32554848e0f1a3a';
 
+// ====== v3.4 信源信誉引擎 + 查询缓存 + 时效性检查 ======
+
+// 受信域名白名单（从 knowledge_base.json industryResources 动态构建）
+let _trustedDomains = [];
+
+// 额外硬编码的权威来源（券商/行业协会/官方机构/行业媒体）
+var HARDCODED_AUTHORITIES = [
+  {domain:'cninfo.com.cn', source:'巨潮资讯网(上市公司公告)', label:'高可信'},
+  {domain:'csrc.gov.cn', source:'中国证监会', label:'高可信'},
+  {domain:'semi.org', source:'SEMI(国际半导体产业协会)', label:'高可信'},
+  {domain:'semichina.org', source:'SEMI中国', label:'高可信'},
+  {domain:'stats.gov.cn', source:'国家统计局', label:'高可信'},
+  {domain:'miit.gov.cn', source:'工信部', label:'高可信'},
+  {domain:'cnipa.gov.cn', source:'国家知识产权局', label:'高可信'},
+  {domain:'ctbpsp.com', source:'中国招标投标公共服务平台', label:'高可信'},
+  {domain:'ccgp.gov.cn', source:'中国政府采购网', label:'高可信'},
+  {domain:'qianlima.com', source:'千里马招标网', label:'中等可信'},
+  {domain:'smtchina.com', source:'SMT China表面组装技术', label:'高可信'},
+  {domain:'chuandong.com', source:'中国传动网', label:'高可信'},
+  {domain:'gg-led.com', source:'高工LED', label:'中等可信'},
+  {domain:'qcc.com', source:'企查查', label:'中等可信'},
+  {domain:'citics.com', source:'中信证券', label:'高可信'},
+  {domain:'htsc.com', source:'华泰证券', label:'高可信'},
+  {domain:'dwzq.com.cn', source:'东吴证券', label:'高可信'},
+  {domain:'hczq.com', source:'华创证券', label:'高可信'},
+  {domain:'cindasc.com', source:'信达证券', label:'高可信'},
+  {domain:'esmchina.com', source:'国际电子商情', label:'高可信'},
+  {domain:'laoyaoba.com', source:'集微网', label:'中等可信'},
+  {domain:'eet-china.com', source:'电子工程专辑', label:'中等可信'},
+  {domain:'eeworld.com.cn', source:'电子工程世界', label:'中等可信'},
+  {domain:'icsmart.cn', source:'芯智讯', label:'中等可信'}
+];
+
+function buildTrustedDomains(kb){
+  var list = [].concat(HARDCODED_AUTHORITIES);
+  try {
+    var resources = kb.industryResources;
+    if(resources.media){
+      resources.media.forEach(function(m){
+        if(m.url) list.push({domain: extractDomain(m.url), source: m.name, label:'高可信'});
+      });
+    }
+    if(resources.dataSources){
+      resources.dataSources.forEach(function(d){
+        if(d.url) list.push({domain: extractDomain(d.url), source: d.name, label:'高可信'});
+      });
+    }
+    if(resources.biddingPlatforms){
+      resources.biddingPlatforms.forEach(function(b){
+        if(b.url) list.push({domain: extractDomain(b.url), source: b.name, label:'高可信'});
+      });
+    }
+  } catch(e){ console.warn('构建域名白名单失败：'+e.message); }
+  _trustedDomains = list;
+}
+
+function extractDomain(url){
+  try {
+    var host = url.replace(/^https?:\/\//,'').replace(/\/.*$/,'').replace(/^www\./,'').toLowerCase();
+    return host;
+  } catch(e){ return (url||'').toLowerCase(); }
+}
+
+function getSourceCredibility(url, title){
+  var domain = extractDomain(url||'');
+  var match = _trustedDomains.find(function(d){ return domain === d.domain || domain.indexOf(d.domain)>=0 || d.domain.indexOf(domain)>=0; });
+  if(match) return {level:'high', label:'高可信', source:match.source, color:'#059669'};
+  if(/\.gov\.cn$|\.edu\.cn$|\.org\.cn$/.test(domain)){
+    return {level:'medium', label:'中等可信', source:'政府/机构域名', color:'#b45309'};
+  }
+  if(/36kr|huxiu|geekpark|ifeng|sina|sohu|163\.com|eastmoney|stcn|cls\.cn|yicai/.test(domain)){
+    return {level:'medium', label:'中等可信', source:'知名媒体', color:'#b45309'};
+  }
+  return {level:'low', label:'需核实', source:'未验证来源', color:'#dc2626'};
+}
+
+// 查询缓存（localStorage，24小时有效期）
+var CACHE_TTL = 24 * 60 * 60 * 1000;
+
+function getSearchCache(query){
+  try {
+    var raw = localStorage.getItem('agent3_search_cache');
+    if(!raw) return null;
+    var cache = JSON.parse(raw);
+    var key = query.trim().toLowerCase();
+    if(cache[key] && (Date.now() - cache[key].ts) < CACHE_TTL){
+      return cache[key].data;
+    }
+    return null;
+  } catch(e){ return null; }
+}
+
+function setSearchCache(query, results){
+  try {
+    var raw = localStorage.getItem('agent3_search_cache');
+    var cache = raw ? JSON.parse(raw) : {};
+    var now = Date.now();
+    Object.keys(cache).forEach(function(k){
+      if(now - cache[k].ts > CACHE_TTL) delete cache[k];
+    });
+    var keys = Object.keys(cache);
+    if(keys.length >= 50){
+      keys.sort(function(a,b){ return cache[a].ts - cache[b].ts; });
+      keys.slice(0, keys.length - 49).forEach(function(k){ delete cache[k]; });
+    }
+    cache[query.trim().toLowerCase()] = {ts: now, data: results};
+    localStorage.setItem('agent3_search_cache', JSON.stringify(cache));
+  } catch(e){}
+}
+
+// 知识库时效性检查
+var _kbFreshness = {daysSinceUpdate: null, isStale: false, warning: ''};
+
+function checkKnowledgeFreshness(kb){
+  try {
+    var lastUpdate = kb.lastUpdated;
+    if(!lastUpdate) return;
+    var daysSince = Math.floor((Date.now() - new Date(lastUpdate).getTime()) / 86400000);
+    _kbFreshness.daysSinceUpdate = daysSince;
+    if(daysSince > 90){
+      _kbFreshness.isStale = true;
+      _kbFreshness.warning = '\n\n⚠️⚠️ 【知识库严重过时警告】知识库已' + daysSince + '天未更新（上次：' + lastUpdate + '）。涉及政策、市场数据、竞品动态的回答可能严重过时。回答中涉及此类信息时，必须开头声明"知识库数据截至' + lastUpdate + '，以下信息可能已过时"。\n';
+    } else if(daysSince > 30){
+      _kbFreshness.isStale = true;
+      _kbFreshness.warning = '\n\n⚠️ 【知识库过时提醒】知识库已' + daysSince + '天未更新（上次：' + lastUpdate + '）。涉及政策、市场数据的回答请提醒用户核实时效性。\n';
+    } else {
+      _kbFreshness.isStale = false;
+      _kbFreshness.warning = '';
+    }
+  } catch(e){ _kbFreshness.warning = ''; }
+}
+
 	// ====== 系统提示词（行为规则部分 - 不常变） ======
 	const PROMPT_RULES = `
 	===== 联网搜索失败处理规则（重要！）=====
@@ -338,13 +470,20 @@ const SERPAPI_KEY = '473a0fd9c31758cb79402d2b22094c9b7e3b55333801380cb32554848e0
 	  var resp = await fetch('knowledge_base.json');
 	  if(!resp.ok) throw new Error('HTTP ' + resp.status);
 	  var kb = await resp.json();
-	  SYSTEM_PROMPT = buildKnowledgeText(kb) + PROMPT_RULES;
+	  // v3.4: 构建信源白名单 + 时效性检查
+	  buildTrustedDomains(kb);
+	  checkKnowledgeFreshness(kb);
+	  SYSTEM_PROMPT = buildKnowledgeText(kb) + _kbFreshness.warning + PROMPT_RULES;
 	  // 更新消息列表中的系统提示词
 	  if(messages.length > 0 && messages[0].role === 'system'){
 	   messages[0].content = SYSTEM_PROMPT;
 	  }
 	  var updateTime = kb.lastUpdated || '未知';
-	  console.log('知识库已加载 (v' + (kb.version||'?') + ', 更新于' + updateTime + ')');
+	  console.log('知识库已加载 (v' + (kb.version||'?') + ', 更新于' + updateTime + ', 白名单' + _trustedDomains.length + '条, 距今' + (_kbFreshness.daysSinceUpdate||'?') + '天)');
+	  // v3.4: 如果知识库过期，在页面顶部显示提醒
+	  if(_kbFreshness.isStale){
+	   showFreshnessBanner();
+	  }
 	 } catch(e){
 	  console.warn('知识库加载失败，使用兜底提示词：' + e.message);
 	  SYSTEM_PROMPT = FALLBACK_PROMPT;
@@ -352,6 +491,24 @@ const SERPAPI_KEY = '473a0fd9c31758cb79402d2b22094c9b7e3b55333801380cb32554848e0
 	   messages[0].content = SYSTEM_PROMPT;
 	  }
 	 }
+	}
+
+	// v3.4: 知识库过期页面顶部提醒
+	function showFreshnessBanner(){
+	 var existing = document.getElementById('freshness-banner');
+	 if(existing) existing.remove();
+	 var days = _kbFreshness.daysSinceUpdate;
+	 if(!_kbFreshness.isStale || !days) return;
+	 var severity = days > 90 ? '严重' : '';
+	 var color = days > 90 ? '#dc2626' : '#b45309';
+	 var banner = document.createElement('div');
+	 banner.id = 'freshness-banner';
+	 banner.style.cssText = 'background:'+color+';color:#fff;text-align:center;padding:6px 16px;font-size:13px;font-weight:600;flex-shrink:0;cursor:pointer';
+	 banner.title = '点击查看 knowledge_base.json 更新指南';
+	 banner.innerHTML = '⚠️ 知识库已' + days + '天未更新，行业数据可能' + severity + '过时 — <u>点击了解如何更新</u>';
+	 banner.onclick = function(){ window.open('https://github.com/Elvv11/churui-agent/blob/master/knowledge_base_SOP.md','_blank'); };
+	 var topbar = document.querySelector('.topbar');
+	 if(topbar) topbar.parentNode.insertBefore(banner, topbar);
 	}
 
 	// 页面初始化：先用兜底提示词，loadKnowledgeBase() 完成后自动替换
@@ -629,7 +786,7 @@ function renderMarkdown(text){
 	 if(window._lastSearchSources && window._lastSearchSources.length > 0){
 	  window._lastSearchSources.forEach(function(src){
 	   text = text.replace(new RegExp('\\['+src.num+'\\]','g'),
-	    '<sup><a href="'+src.url+'" target="_blank" title="'+src.title.replace(/"/g,'&quot;')+'" style="color:#4f46e5;text-decoration:none;font-weight:700">['+src.num+']</a></sup>');
+	    '<sup><a href="'+src.url+'" target="_blank" title="'+src.title.replace(/"/g,'&quot;')+(src.credibility&&src.credibility.label?' ['+src.credibility.label+']':'')+'" style="color:'+(src.credibility&&src.credibility.color?src.credibility.color:'#4f46e5')+';text-decoration:none;font-weight:700;border-bottom:2px solid '+(src.credibility&&src.credibility.color?src.credibility.color:'#4f46e5')+'">['+src.num+']</a></sup>');
 	  });
 	 }
 
@@ -669,39 +826,63 @@ async function send(){
  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
  try {
-	  // ====== 联网搜索（v3.2 B1 - SerpAPI百度引擎） ======
-	  let searchResults = '';
-	  const searchSources = [];
-	  try {
-	   const sq = encodeURIComponent(text);
-	   const serpResp = await fetch(`https://serpapi.com/search.json?engine=baidu&q=${sq}&api_key=${SERPAPI_KEY}`);
-	   const serpData = await serpResp.json();
-	   const items = [];
-	   if(serpData.error){ console.warn("SerpAPI错误: "+serpData.error); }
-	   if(serpData.organic_results){
-	    serpData.organic_results.slice(0,6).forEach(r => {
-	     var snippet = r.snippet || r.title || "";
-	     if(snippet) items.push({text: snippet, url: r.link||"", title: r.title||""});
-	    });
-	   }
-	   if(items.length>0){
-	    searchResults = '\n\n【联网搜索·百度引擎·引用来源见角标】\n';
-	    items.forEach((item,i)=>{
-	     searchResults += `[${i+1}] ${item.text}${item.url?' (URL:'+item.url+')':''}\n`;
-	     if(item.url) searchSources.push({num:i+1,url:item.url,title:item.title.slice(0,80)});
-	    });
-	    searchResults += '\n请在回答中用[1][2]角标引用。禁止编造搜索结果中没有的具体信息。';
-	   } else {
-	    const eq = encodeURIComponent(text);
-	    searchResults = `\n\n（本次联网搜索未返回有效结果。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
-	   }
-	  } catch(e){
-	   const eq = encodeURIComponent(text);
-	   searchResults = `\n\n（联网搜索失败。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
-	  }
+		  // ====== 联网搜索（v3.4 B4 - 缓存+信誉评级+统计） ======
+		  let searchResults = '';
+		  const searchSources = [];
+		  let fromCache = false;
+		  try {
+		   // B4-1: 先查缓存（24h有效）
+		   var cached = getSearchCache(text);
+		   if(cached){
+		    searchSources.push.apply(searchSources, cached.sources);
+		    searchResults = cached.promptText;
+		    fromCache = true;
+		    console.log('搜索缓存命中（' + searchSources.length + '条来源）');
+		   } else {
+		   const sq = encodeURIComponent(text);
+		   const serpResp = await fetch(`https://serpapi.com/search.json?engine=baidu&q=${sq}&api_key=${SERPAPI_KEY}`);
+		   const serpData = await serpResp.json();
+		   const items = [];
+		   if(serpData.error){ console.warn("SerpAPI\u9519\u8bef: "+serpData.error); }
+		   if(serpData.organic_results){
+		    serpData.organic_results.slice(0,10).forEach(r => {
+		     var snippet = r.snippet || r.title || "";
+		     if(snippet) items.push({text: snippet, url: r.link||"", title: r.title||"", credibility: getSourceCredibility(r.link||"", r.title||"")});
+		    });
+		   }
+		   // B4-2: 按信誉排序（高可信优先）
+		   items.sort(function(a,b){
+		    var order = {high:0, medium:1, low:2};
+		    return (order[a.credibility.level]||2) - (order[b.credibility.level]||2);
+		   });
+		   if(items.length>0){
+		    var highCount = items.filter(function(it){return it.credibility.level==='high';}).length;
+		    var medCount = items.filter(function(it){return it.credibility.level==='medium';}).length;
+		    var lowCount = items.filter(function(it){return it.credibility.level==='low';}).length;
+		    searchResults = '\n\n【联网搜索·百度引擎·v3.4信源信誉已评级·引用见角标】\n';
+		    searchResults += '（搜索统计：🔵高可信' + highCount + '条 / 🟡中等可信' + medCount + '条 / 🔴需核实' + lowCount + '条。优先采信高可信来源，对需核实来源谨慎引用。）\n';
+		    items.forEach((item,i)=>{
+		     var credTag = item.credibility ? (item.credibility.level==='high' ? '🔵' : (item.credibility.level==='medium' ? '🟡' : '🔴')) : '';
+		     var credSrc = item.credibility ? item.credibility.source : '';
+		     searchResults += '['+(i+1)+'] '+credTag+' '+credSrc+'：'+item.text+(item.url?' (URL:'+item.url+')':'')+'\n';
+		     if(item.url) searchSources.push({num:i+1,url:item.url,title:item.title.slice(0,80),credibility:item.credibility});
+		    });
+		    searchResults += '\n请在回答中用[1][2]角标引用，优先采信高可信来源。对标注🔴需核实的来源，必须在引用时提示“此信息来自未验证来源，建议人工核实”。禁止编造搜索结果中没有的具体信息。';
+		    // B4-3: 存入缓存
+		    setSearchCache(text, {sources: searchSources, promptText: searchResults});
+		   } else {
+		    const eq = encodeURIComponent(text);
+		    searchResults = `\n\n（本次联网搜索未返回有效结果。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+		   }
+		   } // end cache else block
+		  } catch(e){
+		   const eq = encodeURIComponent(text);
+		   searchResults = `\n\n（联网搜索失败。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+		  }
 
-	  // 保存搜索来源供 renderMarkdown 使用
-	  window._lastSearchSources = searchSources;
+		  // 保存搜索来源供 renderMarkdown 使用（v3.4: 含信誉信息+缓存标记）
+		  window._lastSearchSources = searchSources;
+		  window._searchFromCache = fromCache;
 
   const reqMsgs = [...messages, {role:'system',content:searchResults}];
   const resp = await fetch(API_URL, {
