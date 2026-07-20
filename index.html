@@ -75,6 +75,28 @@ body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;h
 .toast-err{background:#ef4444;color:#fff}
 
 @media(max-width:768px){.sidebar{display:none}}
+/* 右侧历史面板 */
+.history-panel{width:260px;background:#fff;border-left:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.history-panel h3{font-size:12px;color:#64748b;padding:14px 12px 6px;text-transform:uppercase;letter-spacing:.05em}
+.history-search{padding:8px 12px}
+.history-search input{width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-family:inherit;outline:none}
+.history-search input:focus{border-color:#4f46e5}
+.history-list{flex:1;overflow-y:auto;padding:0 8px}
+.history-item{padding:8px 6px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:.15s;border-radius:6px;margin-bottom:2px}
+.history-item:hover{background:#f8fafc}
+.history-item .hi-title{font-size:12px;color:#1e293b;line-height:1.4;margin-bottom:2px}
+.history-item .hi-meta{font-size:10px;color:#9ca3af;display:flex;justify-content:space-between}
+.stat{display:flex;justify-content:space-between;padding:7px 16px;font-size:13px;color:#1e293b;cursor:pointer;transition:.15s}
+.stat:hover{background:#f8fafc}
+.stat span:last-child{font-weight:700;color:#4f46e5}
+.stat-clickable{cursor:pointer;transition:.15s}.stat-clickable:hover{background:#eef2ff;border-radius:4px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:12px;padding:20px;max-width:360px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-box h3{font-size:14px;color:#1e293b;margin-bottom:10px}
+.modal-box .user-row{font-size:13px;padding:4px 0;color:#475569}
+.modal-close{float:right;cursor:pointer;font-size:18px;color:#9ca3af}
+@media(max-width:1000px){.history-panel{display:none}}
+
 </style>
 </head>
 <body>
@@ -86,10 +108,10 @@ body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;h
   <div class="uname" id="name-display"></div>
  </div>
  <h3>📊 共享知识库</h3>
- <div class="stat"><span>💬 总对话</span><span id="stat-chats">-</span></div>
- <div class="stat"><span>📚 已验证知识</span><span id="stat-facts">-</span></div>
- <div class="stat"><span>📰 速报存档</span><span id="stat-briefs">-</span></div>
- <div class="stat"><span>👥 贡献者</span><span id="stat-users">-</span></div>
+ <div class="stat stat-clickable" onclick="showStats('chats')"><span>💬 总对话</span><span id="stat-chats">-</span></div>
+ <div class="stat stat-clickable" onclick="showStats('facts')"><span>📚 已验证知识</span><span id="stat-facts">-</span></div>
+ <div class="stat stat-clickable" onclick="showStats('briefs')"><span>📰 速报存档</span><span id="stat-briefs">-</span></div>
+ <div class="stat stat-clickable" onclick="showStats('users')"><span>👥 贡献者</span><span id="stat-users">-</span></div>
  <button class="btn-sm" onclick="loadSharedFacts()">🔄 刷新知识库</button>
  <button class="btn-sm" onclick="exportKnowledge()">💾 导出知识库</button>
 	 <h3>📌 最近学到的（全团队）</h3>
@@ -121,6 +143,18 @@ body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;h
  <input type="text" id="user-input" placeholder="输入你的问题..." onkeydown="if(event.key==='Enter')send()">
  <button id="send-btn" onclick="send()">发送</button>
 </div>
+</div>
+</div>
+
+<!-- 右侧历史面板 -->
+<div class="history-panel">
+ <h3>📋 对话历史</h3>
+ <div class="history-search">
+  <input type="text" id="history-search-input" placeholder="🔍 搜索历史对话..." oninput="searchHistory()">
+ </div>
+ <div class="history-list" id="history-list">
+  <div style="font-size:11px;color:#9ca3af;padding:8px;text-align:center">加载中...</div>
+ </div>
 </div>
 
 <script>
@@ -415,7 +449,7 @@ async function loadSharedFacts(category){
 	  // 统计用户数
 	  var userList = await supabaseGet({ select: 'user_name', order: 'created_at.desc', limit: '500' });
 	  var users = [...new Set(userList.map(function(u){return u.user_name;}).filter(Boolean))];
-	  document.getElementById('stat-users').textContent = users.length > 0 ? users.length + '人' : '-';
+	  document.getElementById('stat-users').textContent = users.length > 0 ? users.length + '人' : '-'; loadHistory();
 	 } catch(e){ console.error(e); }
 }
 
@@ -727,9 +761,81 @@ function exportKnowledge(){
 
 function askSuggestion(el){ document.getElementById('user-input').value = el.textContent; send(); }
 
+// ====== 历史对话管理 ======
+function loadHistory(filter){
+ var allChats = [];
+ supabaseGet({ data_type: 'eq.chat', order: 'created_at.desc', limit: '200' }).then(function(chats){
+  allChats = chats;
+  if(filter){ allChats = allChats.filter(function(c){ return (c.content&&c.content.question||'').indexOf(filter)>=0; }); }
+  // 去重：同一个问题只显示最新一条
+  var seen = {};
+  var unique = [];
+  allChats.forEach(function(c){
+   var q = (c.content&&c.content.question||'').trim();
+   if(q && !seen[q]){ seen[q]=true; unique.push(c); }
+  });
+  unique = unique.slice(0, 50);
+  var cats = {'产品':'#4f46e5','竞品':'#b45309','客户':'#059669','零部件':'#0891b2','政策':'#dc2626','其他':'#9ca3af'};
+  document.getElementById('history-list').innerHTML = unique.length>0
+   ? unique.map(function(c){
+    var q = (c.content&&c.content.question||'');
+    var title = q.length>35 ? q.slice(0,35)+'...' : q;
+    var cat = (c.content&&c.content.category)||'其他';
+    var cc = cats[cat]||'#9ca3af';
+    return '<div class="history-item" onclick="reAsk(\''+q.replace(/'/g,'&#39;').replace(/\\/g,'\\\\')+'\')"><div class="hi-title">'+title+'</div><div class="hi-meta"><span>'+c.user_name+'</span><span style="color:'+cc+'">'+cat+'</span></div></div>';
+   }).join('')
+   : '<div style="font-size:11px;color:#9ca3af;padding:8px;text-align:center">暂无历史对话</div>';
+  // 更新左侧统计
+  document.getElementById('stat-chats').textContent = unique.length;
+ }).catch(function(){});
+}
+
+function searchHistory(){
+ var kw = document.getElementById('history-search-input').value.trim();
+ loadHistory(kw||null);
+}
+
+function reAsk(text){
+ document.getElementById('user-input').value = text;
+ send();
+}
+
+// ====== 左侧统计修复 ======
+function showStats(type){
+ if(!userName){ toast('请先输入名字','err'); return; }
+ if(type==='users'){
+  supabaseGet({ select: 'user_name', order: 'created_at.desc', limit: '500' }).then(function(list){
+   var names = [...new Set(list.map(function(u){return u.user_name;}).filter(Boolean))];
+   var html = '<div class="modal-overlay" onclick="this.remove()"><div class="modal-box" onclick="event.stopPropagation()"><span class="modal-close" onclick="this.parentElement.parentElement.remove()">✕</span><h3>👥 贡献者（'+names.length+'人）</h3>';
+   names.forEach(function(n){ html += '<div class="user-row">👤 '+n+'</div>'; });
+   html += '</div></div>';
+   document.body.insertAdjacentHTML('beforeend', html);
+  });
+ }
+ if(type==='facts'){
+  supabaseGet({ data_type: 'eq.fact', order: 'created_at.desc', limit: '500' }).then(function(list){
+   var verified = list.filter(function(f){ var c=f.content||{}; return c.status==='verified'; });
+   document.getElementById('stat-facts').textContent = '+'+(verified.length||0);
+   toast('已验证知识：'+verified.length+'条（共'+list.length+'条）','ok');
+  });
+ }
+ if(type==='chats'){
+  supabaseGet({ data_type: 'eq.chat', order: 'created_at.desc', limit: '500' }).then(function(list){
+   alert('总对话：'+list.length+'条');
+  });
+ }
+ if(type==='briefs'){
+  supabaseGet({ data_type: 'eq.brief', order: 'created_at.desc', limit: '100' }).then(function(list){
+   alert('速报存档：'+list.length+'份');
+  });
+ }
+}
+
+// 修改左侧统计栏为可点击
 document.getElementById('suggestions').innerHTML = ['⚡ 一日速报','路远LY-CP860与松下NPM-D3参数对比','安川Σ-7 vs 汇川SV660 谁更适合贴片机','纽威数控导轨/光栅尺采购现状','最近贴片机零部件国产替代有什么进展？'].map(s=>`<span onclick="askSuggestion(this)">${s}</span>`).join('');
 document.addEventListener('keydown',function(e){ if(e.ctrlKey&&e.key==='Enter')send(); });
 loadKnowledgeBase();
+loadHistory();
 if(userName) loadSharedFacts();
 </script>
 </body>
