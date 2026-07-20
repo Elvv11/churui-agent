@@ -897,9 +897,7 @@ async function send(){
   const reply = data.choices?.[0]?.message?.content||'（未返回内容）';
 	  // v3.4: 无搜索结果时标注知识库驱动
 	  var isKbDriven = (searchSources.length === 0);
-	  var displayReply = isKbDriven ? '📚 以下回答由知识库驱动（未使用联网搜索）
-
-' + reply : reply;
+	  var displayReply = isKbDriven ? '📚 以下回答由知识库驱动（未使用联网搜索）\n\n' + reply : reply;
 
   typingDiv.remove();
   addMsg('assistant', displayReply, 'Agent');
