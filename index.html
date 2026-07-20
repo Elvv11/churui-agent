@@ -659,7 +659,7 @@ async function send(){
  messages.push({ role: 'user', content: text });
 
  // 存对话到 Supabase
- supabasePost({ user_name: userName, data_type: 'chat', content: { question: text } }).catch(()=>{});
+ var chatId = Date.now(); // 临时ID，用于后续更新
 
  isGenerating = true; document.getElementById('send-btn').disabled = true;
 
@@ -762,12 +762,22 @@ function exportKnowledge(){
 function askSuggestion(el){ document.getElementById('user-input').value = el.textContent; send(); }
 
 // ====== 历史对话管理 ======
+var _historyCache = [];
+
 function loadHistory(filter){
  var allChats = [];
  supabaseGet({ data_type: 'eq.chat', order: 'created_at.desc', limit: '200' }).then(function(chats){
   allChats = chats;
-  if(filter){ allChats = allChats.filter(function(c){ return (c.content&&c.content.question||'').indexOf(filter)>=0; }); }
-  // 去重：同一个问题只显示最新一条
+  if(filter){
+   var kw = filter.toLowerCase();
+   allChats = allChats.filter(function(c){
+    var q = (c.content&&c.content.question||'').toLowerCase();
+    var a = (c.content&&c.content.answer||'').toLowerCase();
+    return q.indexOf(kw)>=0 || a.indexOf(kw)>=0;
+   });
+  }
+  _historyCache = allChats;
+  // 去重：同问题只保留最新
   var seen = {};
   var unique = [];
   allChats.forEach(function(c){
@@ -779,13 +789,14 @@ function loadHistory(filter){
   document.getElementById('history-list').innerHTML = unique.length>0
    ? unique.map(function(c){
     var q = (c.content&&c.content.question||'');
-    var title = q.length>35 ? q.slice(0,35)+'...' : q;
+    var summary = (c.content&&c.content.summary)||q.slice(0,30);
+    var title = summary.length>35 ? summary.slice(0,35)+'...' : summary;
     var cat = (c.content&&c.content.category)||'其他';
     var cc = cats[cat]||'#9ca3af';
-    return '<div class="history-item" onclick="reAsk(\''+q.replace(/'/g,'&#39;').replace(/\\/g,'\\\\')+'\')"><div class="hi-title">'+title+'</div><div class="hi-meta"><span>'+c.user_name+'</span><span style="color:'+cc+'">'+cat+'</span></div></div>';
+    var qEncoded = q.replace(/\\/g,'\\\\').replace(/'/g,'\\x27').replace(/"/g,'\\x22');
+    return '<div class="history-item" onclick="reAsk(this)" data-question="'+qEncoded+'"><div class="hi-title">'+title+'</div><div class="hi-meta"><span>'+c.user_name+'</span><span style="color:'+cc+'">'+cat+'</span></div></div>';
    }).join('')
    : '<div style="font-size:11px;color:#9ca3af;padding:8px;text-align:center">暂无历史对话</div>';
-  // 更新左侧统计
   document.getElementById('stat-chats').textContent = unique.length;
  }).catch(function(){});
 }
@@ -795,9 +806,13 @@ function searchHistory(){
  loadHistory(kw||null);
 }
 
-function reAsk(text){
+function reAsk(el){
+ var text = el.getAttribute('data-question');
+ if(!text) return;
  document.getElementById('user-input').value = text;
  send();
+ // 滚动到输入框
+ document.getElementById('user-input').scrollIntoView({behavior:'smooth'});
 }
 
 // ====== 左侧统计修复 ======
