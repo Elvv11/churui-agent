@@ -843,7 +843,7 @@ async function send(){
 		   const serpResp = await fetch(`https://serpapi.com/search.json?engine=baidu&q=${sq}&api_key=${SERPAPI_KEY}`);
 		   const serpData = await serpResp.json();
 		   const items = [];
-		   if(serpData.error){ console.warn("SerpAPI\u9519\u8bef: "+serpData.error); }
+		   if(serpData.error){ console.warn("SerpAPI错误: "+serpData.error); toast("搜索API故障,请查SerpAPI额度","err"); }
 		   if(serpData.organic_results){
 		    serpData.organic_results.slice(0,10).forEach(r => {
 		     var snippet = r.snippet || r.title || "";
@@ -872,7 +872,7 @@ async function send(){
 		    setSearchCache(text, {sources: searchSources, promptText: searchResults});
 		   } else {
 		    const eq = encodeURIComponent(text);
-		    searchResults = `\n\n（本次联网搜索未返回有效结果。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+		    searchResults = `\n\n（⚠️ 搜索未返回结果。如果是首次出现：SerpAPI免费额度可能已用完(100次/月)，请查 https://serpapi.com 。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
 		   }
 		   } // end cache else block
 		  } catch(e){
