@@ -840,8 +840,13 @@ async function send(){
 		    console.log('搜索缓存命中（' + searchSources.length + '条来源）');
 		   } else {
 		   const sq = encodeURIComponent(text);
-		   const serpResp = await fetch(`https://serpapi.com/search.json?engine=baidu&q=${sq}&api_key=${SERPAPI_KEY}`);
+		   console.log('[v3.4] 搜索: '+text.slice(0,50)+'...');
+		   const serpResp = await fetch('https://serpapi.com/search.json?engine=baidu&q='+sq+'&api_key='+SERPAPI_KEY);
+		   console.log('[v3.4] SerpAPI状态: '+serpResp.status);
 		   const serpData = await serpResp.json();
+		   console.log('[v3.4] SerpAPI响应keys:', Object.keys(serpData).join(','));
+		   if(serpData.search_metadata) console.log('[v3.4] SerpAPI状态:', serpData.search_metadata.status);
+		   if(!serpData.organic_results && !serpData.error) console.warn('[v3.4] 无organic_results且无error, 完整响应:', JSON.stringify(serpData).slice(0,300));
 		   const items = [];
 		   if(serpData.error){ console.warn("SerpAPI错误: "+serpData.error); toast("搜索API故障,请查SerpAPI额度","err"); }
 		   if(serpData.organic_results){
