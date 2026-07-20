@@ -24,6 +24,7 @@ body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;h
 .sidebar .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block}
 .fact-list{flex:1;overflow-y:auto;padding:0 16px}
 .fact-item{font-size:11px;color:#475569;padding:6px 0;border-bottom:1px solid #f1f5f9;line-height:1.5}
+.cat-tag{transition:.2s}.cat-tag:hover{background:#e2e8f0!important}
 .fact-item .who{color:#4f46e5;font-weight:600}
 
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
@@ -91,7 +92,16 @@ body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;h
  <div class="stat"><span>👥 贡献者</span><span id="stat-users">-</span></div>
  <button class="btn-sm" onclick="loadSharedFacts()">🔄 刷新知识库</button>
  <button class="btn-sm" onclick="exportKnowledge()">💾 导出知识库</button>
- <h3>📌 最近学到的（全团队）</h3>
+	 <h3>📌 最近学到的（全团队）</h3>
+	 <div style="padding:0 16px 4px;display:flex;flex-wrap:wrap;gap:4px" id="cat-filters">
+	  <span class="cat-tag cat-active" onclick="filterFacts('全部',this)">全部</span>
+	  <span class="cat-tag" onclick="filterFacts('产品',this)">产品</span>
+	  <span class="cat-tag" onclick="filterFacts('竞品',this)">竞品</span>
+	  <span class="cat-tag" onclick="filterFacts('客户',this)">客户</span>
+	  <span class="cat-tag" onclick="filterFacts('零部件',this)">零部件</span>
+	  <span class="cat-tag" onclick="filterFacts('政策',this)">政策</span>
+	  <span class="cat-tag" onclick="filterFacts('其他',this)">其他</span>
+	 </div>
  <div class="fact-list" id="fact-list"><div class="fact-item" style="color:#9ca3af">输入名字后加载...</div></div>
 </div>
 
@@ -122,10 +132,13 @@ const SUPABASE_KEY = 'sb_publishable_b7IywEMyKonprW6BTAYh7Q_6ucx39eo';
 const API_KEY = 'sk-e36a1f2b205747759fee4b6a6c113a21';
 const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
+// ====== SerpAPI (百度搜索引擎) ======
+const SERPAPI_KEY = '473a0fd9c31758cb79402d2b22094c9b7e3b55333801380cb32554848e0f1a3a';
+
 	// ====== 系统提示词（行为规则部分 - 不常变） ======
 	const PROMPT_RULES = `
 	===== 联网搜索失败处理规则（重要！）=====
-	当联网搜索（DuckDuckGo）未能获取有效信息时：
+	当联网搜索（SerpAPI百度引擎）未能获取有效信息时：
 	1. 先坦诚说"本次联网搜索未获取到实时信息"
 	2. 基于知识库给出你能提供的最好答案
 	3. 最后给出手动搜索建议——包括具体的百度搜索链接。格式：
@@ -346,28 +359,107 @@ async function supabaseGet(params){
  return resp.json();
 }
 
+async function supabasePatch(id, data){
+	 const resp = await fetch(SUPABASE_URL + '/rest/v1/agent_data?id=eq.' + encodeURIComponent(id), {
+	  method: 'PATCH',
+	  headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'return=minimal' },
+	  body: JSON.stringify(data)
+	 });
+	 return resp.ok;
+}
+
+async function supabaseDelete(id){
+	 const resp = await fetch(SUPABASE_URL + '/rest/v1/agent_data?id=eq.' + encodeURIComponent(id), {
+	  method: 'DELETE',
+	  headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+	 });
+	 return resp.ok;
+}
+
 // ====== 共享知识库加载 ======
-async function loadSharedFacts(){
- if(!userName) return;
- try {
-  const facts = await supabaseGet({ data_type: 'eq.fact', order: 'created_at.desc', limit: '30' });
-  const chatCount = await supabaseGet({ data_type: 'eq.chat', select: 'id', limit: '1', order: 'created_at.desc' });
-  const briefCount = await supabaseGet({ data_type: 'eq.brief', select: 'id', limit: '1', order: 'created_at.desc' });
+let _allFacts = [];
+let _currentFilter = '全部';
 
-  document.getElementById('stat-facts').textContent = facts.length > 0 ? '+' + facts.length : '-';
-  document.getElementById('stat-fact-list').textContent = ''; // clear for rebuild
-  document.getElementById('fact-list').innerHTML = facts.length > 0
-   ? facts.map(f => {
-    const c = f.content || {};
-    return `<div class="fact-item"><span class="who">${f.user_name||''}</span> ${(c.text||'').slice(0,80)}</div>`;
-   }).join('')
-   : '<div class="fact-item" style="color:#9ca3af">暂无共享知识<br>开始提问吧</div>';
+async function loadSharedFacts(category){
+	 if(!userName) return;
+	 if(!category) category = _currentFilter;
+	 _currentFilter = category;
+	 try {
+	  var allFacts = await supabaseGet({ data_type: 'eq.fact', order: 'created_at.desc', limit: '200' });
+	  _allFacts = allFacts;
+	  // 按分类筛选
+		  // 过滤掉已删除的
+	  var facts = category === '全部' ? allFacts : allFacts.filter(function(f){
+	   var c = f.content || {};
+	   return c.category === category;
+	  });
+		  // 过滤已删除的知识
+		  facts = facts.filter(function(f){ var c = f.content || {}; return c.status !== 'deleted'; });
+	  facts = facts.slice(0, 30);
 
-  // 统计用户数
-  const userList = await supabaseGet({ select: 'user_name', order: 'created_at.desc', limit: '500' });
-  const users = [...new Set(userList.map(u=>u.user_name).filter(Boolean))];
-  document.getElementById('stat-users').textContent = users.length > 0 ? users.length + '人' : '-';
- } catch(e){ console.error(e); }
+	  document.getElementById('stat-facts').textContent = facts.length > 0 ? '+' + facts.length : '-';
+	  document.getElementById('fact-list').innerHTML = facts.length > 0
+	   ? facts.map(function(f){
+	    var c = f.content || {};
+	    var cat = c.category || '其他';
+	    var colors = {'产品':'#4f46e5','竞品':'#b45309','客户':'#059669','零部件':'#0891b2','政策':'#dc2626','其他':'#9ca3af'};
+	    var catColor = colors[cat] || '#9ca3af';
+		    var statusIcon = c.status === 'verified' ? ' ✅' : '';
+		    return '<div class="fact-item"><span class="who">'+f.user_name+'</span> <span style="font-size:9px;background:'+catColor+';color:#fff;padding:1px 5px;border-radius:8px;margin-right:3px">'+cat+'</span>'+statusIcon+' '+(c.text||'').slice(0,60)
+		     + '<span style="float:right;cursor:pointer;opacity:0.5" title="确认" onclick="event.stopPropagation();verifyFact(\''+f.id+'\')">✅</span>'
+		     + '<span style="float:right;cursor:pointer;opacity:0.5;margin-right:4px" title="删除" onclick="event.stopPropagation();deleteFact(\''+f.id+'\')">❌</span>'
+		     + '</div>';
+	   }).join('')
+	   : '<div class="fact-item" style="color:#9ca3af">暂无此类知识<br>切换分类或开始提问</div>';
+
+	  // 统计用户数
+	  var userList = await supabaseGet({ select: 'user_name', order: 'created_at.desc', limit: '500' });
+	  var users = [...new Set(userList.map(function(u){return u.user_name;}).filter(Boolean))];
+	  document.getElementById('stat-users').textContent = users.length > 0 ? users.length + '人' : '-';
+	 } catch(e){ console.error(e); }
+}
+
+function filterFacts(cat, el){
+	 document.querySelectorAll('.cat-tag').forEach(function(t){ t.style.background='#f1f5f9'; t.style.color='#475569'; });
+	 el.style.background='#4f46e5'; el.style.color='#fff';
+	 loadSharedFacts(cat);
+}
+
+async function verifyFact(id){
+	 var ok = await supabasePatch(id, { content: _allFacts.find(function(f){return f.id===parseInt(id);}).content });
+	 // Actually we need to update just the status field
+	 // Simpler approach: re-fetch and find the fact
+	 var fact = _allFacts.find(function(f){ return f.id == id; });
+	 if(!fact) return;
+	 var c = fact.content || {};
+	 c.status = 'verified';
+	 await supabasePatch(id, { content: c });
+	 fact.content = c;
+	 loadSharedFacts();
+}
+
+async function deleteFact(id){
+	 if(!confirm('确定删除这条知识吗？')) return;
+	 await supabaseDelete(id);
+	 _allFacts = _allFacts.filter(function(f){ return f.id != id; });
+	 loadSharedFacts();
+}
+
+// ====== 知识分类（v3.2 - A3新增） ======
+function classifyFact(text){
+ // 根据内容关键词自动判断知识类别
+ var t = text.toLowerCase();
+ // 政策类
+ if(/政策|补贴|大基金|长臂管辖|制裁|关税|工信部|发改委|国务院|FDPR|出口管制|国产替代政策/.test(t)) return '政策';
+ // 竞品类
+ if(/路远|易通|木几|ASM|松下|富士|雅马哈|西门子|THK|NSK|安川|发那科|海德汉|雷尼绍|基恩士|SMC|Festo|自研率|市占|对标|竞品/.test(t)) return '竞品';
+ // 客户类
+ if(/华为|烽火|海康|大华|纽威|先导|迈为|汇川|联影|海天|比亚迪|富士康|格力|TCL|美的|欧普|立讯|客户|采购/.test(t)) return '客户';
+ // 产品类
+ if(/CR15|C15-ME|C20-ME|滑块|CR系列|CRQ|CD系列|CDC|花键|丝杆|磁栅|编码盘|滑环|磁环|直线电机|空心杯|贴头|模组|楚瑞/.test(t)) return '产品';
+ // 零部件类
+ if(/导轨|伺服电机|光栅尺|工业相机|气动|飞达|Feeder|编码器|传感器|丝杠|轴承|联轴器|减速器|驱动器|变频器|PLC/.test(t)) return '零部件';
+ return '其他';
 }
 
 // ====== 学习并共享（云端） ======
@@ -446,7 +538,12 @@ async function learnAndShare(question, answer){
 	  var s = keySentences[i];
 	  if(s.length < 10 || s.length > 300) continue;
 	  try {
-	   supabasePost({ user_name: userName, data_type: 'fact', content: { text: s.trim(), source: question.slice(0,100) } }).catch(function(){});
+	   var txt = s.trim();
+	   // B3 去重
+	   var dup = _allFacts && _allFacts.some(function(f){ var old = (f.content&&f.content.text)||""; return old.trim()===txt; });
+	   if(dup) continue;
+	   var cat = classifyFact(s);
+	   supabasePost({ user_name: userName, data_type: 'fact', content: { text: txt, source: question.slice(0,100), category: cat } }).catch(function(){});
 	  } catch(e){}
 	 }
 	}
@@ -538,34 +635,39 @@ async function send(){
  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
  try {
-  // ====== 联网搜索（v2改进版） ======
-  let searchResults = '';
-  const searchSources = [];
-  try {
-   const sq = encodeURIComponent(text);
-   const ddg = await fetch(`https://api.duckduckgo.com/?q=${sq}&format=json&no_html=1&skip_disambig=1`);
-   const dd = await ddg.json();
-   const items = [];
-   if(dd.AbstractText) items.push({text:dd.AbstractText,url:dd.AbstractURL||'',title:dd.AbstractSource||'DuckDuckGo'});
-   if(dd.RelatedTopics) dd.RelatedTopics.slice(0,6).forEach(t=>{if(t.Text)items.push({text:t.Text,url:t.FirstURL||'',title:t.Result||'DuckDuckGo'})});
-   if(items.length>0){
-    searchResults = '\n\n【联网搜索·引用来源见角标】\n';
-    items.forEach((item,i)=>{
-     searchResults += `[${i+1}] ${item.text}${item.url?' (URL:'+item.url+')':''}\n`;
-     if(item.url) searchSources.push({num:i+1,url:item.url,title:item.text.slice(0,80)});
-    });
-    searchResults += '\n请在回答中用[1][2]角标引用。禁止编造搜索结果中没有的具体信息。';
-   } else {
-    const eq = encodeURIComponent(text);
-    searchResults = `\n\n（本次联网搜索（DuckDuckGo）未返回有效结果。请基于知识库回答，不要编造实时信息。如果用户问的是时效性问题，请给出手动搜索建议。格式：📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
-   }
-  } catch(e){
-   const eq = encodeURIComponent(text);
-   searchResults = `\n\n（联网搜索失败。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
-  }
+	  // ====== 联网搜索（v3.2 B1 - SerpAPI百度引擎） ======
+	  let searchResults = '';
+	  const searchSources = [];
+	  try {
+	   const sq = encodeURIComponent(text);
+	   const serpResp = await fetch(`https://serpapi.com/search.json?engine=baidu&q=${sq}&api_key=${SERPAPI_KEY}`);
+	   const serpData = await serpResp.json();
+	   const items = [];
+	   if(serpData.error){ console.warn("SerpAPI错误: "+serpData.error); }
+	   if(serpData.organic_results){
+	    serpData.organic_results.slice(0,6).forEach(r => {
+	     var snippet = r.snippet || r.title || "";
+	     if(snippet) items.push({text: snippet, url: r.link||"", title: r.title||""});
+	    });
+	   }
+	   if(items.length>0){
+	    searchResults = '\n\n【联网搜索·百度引擎·引用来源见角标】\n';
+	    items.forEach((item,i)=>{
+	     searchResults += `[${i+1}] ${item.text}${item.url?' (URL:'+item.url+')':''}\n`;
+	     if(item.url) searchSources.push({num:i+1,url:item.url,title:item.title.slice(0,80)});
+	    });
+	    searchResults += '\n请在回答中用[1][2]角标引用。禁止编造搜索结果中没有的具体信息。';
+	   } else {
+	    const eq = encodeURIComponent(text);
+	    searchResults = `\n\n（本次联网搜索未返回有效结果。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+	   }
+	  } catch(e){
+	   const eq = encodeURIComponent(text);
+	   searchResults = `\n\n（联网搜索失败。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+	  }
 
-  // 保存搜索来源供 renderMarkdown 使用
-  window._lastSearchSources = searchSources;
+	  // 保存搜索来源供 renderMarkdown 使用
+	  window._lastSearchSources = searchSources;
 
   const reqMsgs = [...messages, {role:'system',content:searchResults}];
   const resp = await fetch(API_URL, {
