@@ -862,10 +862,7 @@ async function send(){
 		   console.error('[v3.4] 搜索请求失败:', e.message);
 		   toast('搜索请求失败，请检查网络', 'err');
 		   const eq = encodeURIComponent(text);
-		   searchResults = '
-
-（联网搜索请求失败，请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=' + eq + '）
-';
+		   searchResults = '\n\n（联网搜索请求失败，请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=' + eq + '）\n';
 		  }
 
 		  // 保存搜索来源供 renderMarkdown 使用（v3.4: 含信誉信息+缓存标记）
