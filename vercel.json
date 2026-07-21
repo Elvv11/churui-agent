@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    },
+    "api/search.js": {
+      "maxDuration": 10
+    },
+    "api/crawl-daily.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "crons": [
+    {
+      "path": "/api/crawl-daily",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

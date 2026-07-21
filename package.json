@@ -1,0 +1,10 @@
+{
+  "name": "churui-agent",
+  "version": "3.4.3",
+  "description": "楚瑞智能科技贴片机行业情报助手 v3 — Vercel 后端",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "cheerio": "^1.0.0-rc.12"
+  }
+}

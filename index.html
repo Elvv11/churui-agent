@@ -163,11 +163,11 @@ const SUPABASE_URL = 'https://fiqdpidddzamqtxgmhhv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_b7IywEMyKonprW6BTAYh7Q_6ucx39eo';
 
 // ====== DeepSeek ======
-const API_KEY = 'sk-e36a1f2b205747759fee4b6a6c113a21';
-const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+// DeepSeek API 密钥已迁移至后端
+// API端点已迁移至后端 /api/chat
 
 // ====== SerpAPI (百度搜索引擎) ======
-const SERPAPI_KEY = '473a0fd9c31758cb79402d2b22094c9b7e3b55333801380cb32554848e0f1a3a';
+// API 密钥已迁移至后端 Vercel Functions
 
 // ====== v3.4 信源信誉引擎 + 查询缓存 + 时效性检查 ======
 
@@ -826,7 +826,7 @@ async function send(){
  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
  try {
-		  // ====== 联网搜索（v3.4 B4 - 缓存+信誉评级+统计） ======
+		  		  // ====== 联网搜索（v3.4 B4 - 通过 /api/search 代理） ======
 		  let searchResults = '';
 		  const searchSources = [];
 		  let fromCache = false;
@@ -839,67 +839,48 @@ async function send(){
 		    fromCache = true;
 		    console.log('搜索缓存命中（' + searchSources.length + '条来源）');
 		   } else {
-		   const sq = encodeURIComponent(text);
 		   console.log('[v3.4] 搜索: '+text.slice(0,50)+'...');
-		   const serpResp = await fetch('https://serpapi.com/search.json?engine=baidu&q='+sq+'&api_key='+SERPAPI_KEY);
-		   console.log('[v3.4] SerpAPI状态: '+serpResp.status);
-		   const serpData = await serpResp.json();
-		   console.log('[v3.4] SerpAPI响应keys:', Object.keys(serpData).join(','));
-		   if(serpData.search_metadata) console.log('[v3.4] SerpAPI状态:', serpData.search_metadata.status);
-		   if(!serpData.organic_results && !serpData.error) console.warn('[v3.4] 无organic_results且无error, 完整响应:', JSON.stringify(serpData).slice(0,300));
-		   const items = [];
-		   if(serpData.error){ console.warn("SerpAPI错误: "+serpData.error); toast("搜索API故障,请查SerpAPI额度","err"); }
-		   if(serpData.organic_results){
-		    serpData.organic_results.slice(0,10).forEach(r => {
-		     var snippet = r.snippet || r.title || "";
-		     if(snippet) items.push({text: snippet, url: r.link||"", title: r.title||"", credibility: getSourceCredibility(r.link||"", r.title||"")});
-		    });
-		   }
-		   // B4-2: 按信誉排序（高可信优先）
-		   items.sort(function(a,b){
-		    var order = {high:0, medium:1, low:2};
-		    return (order[a.credibility.level]||2) - (order[b.credibility.level]||2);
+		   const searchResp = await fetch('/api/search', {
+		    method: 'POST',
+		    headers: {'Content-Type': 'application/json'},
+		    body: JSON.stringify({ query: text })
 		   });
-		   if(items.length>0){
-		    var highCount = items.filter(function(it){return it.credibility.level==='high';}).length;
-		    var medCount = items.filter(function(it){return it.credibility.level==='medium';}).length;
-		    var lowCount = items.filter(function(it){return it.credibility.level==='low';}).length;
-		    searchResults = '\n\n【联网搜索·百度引擎·v3.4信源信誉已评级·引用见角标】\n';
-		    searchResults += '（搜索统计：🔵高可信' + highCount + '条 / 🟡中等可信' + medCount + '条 / 🔴需核实' + lowCount + '条。优先采信高可信来源，对需核实来源谨慎引用。）\n';
-		    items.forEach((item,i)=>{
-		     var credTag = item.credibility ? (item.credibility.level==='high' ? '🔵' : (item.credibility.level==='medium' ? '🟡' : '🔴')) : '';
-		     var credSrc = item.credibility ? item.credibility.source : '';
-		     searchResults += '['+(i+1)+'] '+credTag+' '+credSrc+'：'+item.text+(item.url?' (URL:'+item.url+')':'')+'\n';
-		     if(item.url) searchSources.push({num:i+1,url:item.url,title:item.title.slice(0,80),credibility:item.credibility});
-		    });
-		    searchResults += '\n请在回答中用[1][2]角标引用，优先采信高可信来源。对标注🔴需核实的来源，必须在引用时提示“此信息来自未验证来源，建议人工核实”。禁止编造搜索结果中没有的具体信息。';
-		    // B4-3: 存入缓存
-		    setSearchCache(text, {sources: searchSources, promptText: searchResults});
-		   } else {
-		    const eq = encodeURIComponent(text);
-		    searchResults = `\n\n（⚠️ 搜索未返回结果。如果是首次出现：SerpAPI免费额度可能已用完(100次/月)，请查 https://serpapi.com 。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+		   const searchData = await searchResp.json();
+		   console.log('[v3.4] 搜索完成:', (searchData.sources||[]).length, '条来源', searchData.error ? '(API错误:'+searchData.error+')' : '');
+		   if(searchData.error && !searchData.sources.length){
+		    toast('搜索API故障: ' + searchData.error.slice(0,50), 'err');
 		   }
-		   } // end cache else block
+		   if(searchData.sources && searchData.sources.length > 0){
+		    searchSources.push.apply(searchSources, searchData.sources);
+		    searchResults = searchData.promptText;
+		    setSearchCache(text, {sources: searchData.sources, promptText: searchData.promptText});
+		   } else {
+		    searchResults = searchData.promptText || '';
+		   }
+		   } // end cache else
 		  } catch(e){
+		   console.error('[v3.4] 搜索请求失败:', e.message);
+		   toast('搜索请求失败，请检查网络', 'err');
 		   const eq = encodeURIComponent(text);
-		   searchResults = `\n\n（联网搜索失败。请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=${eq})）\n`;
+		   searchResults = '
+
+（联网搜索请求失败，请基于知识库回答。📎 建议手动搜索：[百度：关键词](https://www.baidu.com/s?wd=' + eq + '）
+';
 		  }
 
 		  // 保存搜索来源供 renderMarkdown 使用（v3.4: 含信誉信息+缓存标记）
 		  window._lastSearchSources = searchSources;
 		  window._searchFromCache = fromCache;
 
-  const reqMsgs = [...messages, {role:'system',content:searchResults}];
-  const resp = await fetch(API_URL, {
-   method:'POST',
-   headers:{'Content-Type':'application/json','Authorization':`Bearer ${API_KEY}`},
-   body:JSON.stringify({model:'deepseek-chat',messages:reqMsgs,temperature:0.7,max_tokens:3000})
-  });
-
-  if(!resp.ok){ const err = await resp.json().catch(()=>({})); throw new Error(err.error?.message||`请求失败(${resp.status})`); }
-
-  const data = await resp.json();
-  const reply = data.choices?.[0]?.message?.content||'（未返回内容）';
+  // v3.4: 通过 /api/chat 代理调用 DeepSeek
+	  const chatResp = await fetch('/api/chat', {
+	   method:'POST',
+	   headers:{'Content-Type':'application/json'},
+	   body:JSON.stringify({ messages: messages.slice(1), searchPromptText: searchResults })
+	  });
+	  if(!chatResp.ok){ const err = await chatResp.json().catch(()=>({})); throw new Error(err.error||'AI请求失败('+chatResp.status+')'); }
+	  const chatData = await chatResp.json();
+	  const reply = chatData.reply||'（未返回内容）';
 	  // v3.4: 无搜索结果时标注知识库驱动
 	  var isKbDriven = (searchSources.length === 0);
 	  var displayReply = isKbDriven ? '📚 以下回答由知识库驱动（未使用联网搜索）\n\n' + reply : reply;
