@@ -1015,31 +1015,17 @@ function exportKnowledge(){
 	 reader.readAsDataURL(file);
 	}
 
-	// 高校人才搜索
-	async function hrSearch(role){
-	 var btn = document.getElementById('hr-motor-btn');
-	 var btn2 = document.getElementById('hr-mech-btn');
-	 var status = document.getElementById('hr-status');
-	 if(btn) btn.disabled = true; if(btn2) btn2.disabled = true;
-	 status.style.display = 'block'; status.textContent = '搜索中...';
-	 try {
-	  var resp = await fetch('https://churuiagent.netlify.app/.netlify/functions/hr-schools', {
-	   method: 'POST',
-	   headers: {'Content-Type': 'application/json'},
-	   body: JSON.stringify({role: role})
-	  });
-	  var data = await resp.json();
-	  if(data.table){
-	   addMsg('assistant', data.table, 'HR助手');
-	   status.textContent = '找到' + (data.universities||[]).length + '所高校';
-	  } else {
-	   addMsg('assistant', '搜索失败：' + (data.error||'未知'), 'HR助手');
-	  }
-	 } catch(e){ addMsg('assistant', '请求失败', 'HR助手'); }
-	 if(btn) btn.disabled = false; if(btn2) btn2.disabled = false;
+	// 高校人才搜索（使用现有搜索+聊天API）
+	function hrSearchMotor(){
+	 if(!userName){ document.getElementById('name-overlay').style.display='flex'; return; }
+	 document.getElementById('user-input').value = '请帮我整理长三角地区（上海、南京、苏州、杭州、合肥、无锡、宁波）开设电气工程、自动化、软件工程、电子电路、物联网工程、通信工程、计算机科学与技术等专业的高校名单。要求：本科及以上层次，列出学校名称、所在城市、对口学院、就业网链接。以表格形式呈现。';
+	 send();
 	}
-	function hrSearchMotor(){ hrSearch('motor'); }
-	function hrSearchMech(){ hrSearch('mechanical'); }
+	function hrSearchMech(){
+	 if(!userName){ document.getElementById('name-overlay').style.display='flex'; return; }
+	 document.getElementById('user-input').value = '请帮我整理长三角地区（上海、南京、苏州、杭州、合肥、无锡、宁波）开设机械设计制造及其自动化、机械工程、机械电子工程等专业的高校名单。要求：本科及以上层次，列出学校名称、所在城市、对口学院、就业网链接。以表格形式呈现。';
+	 send();
+	}
 function askSuggestion(el){ document.getElementById('user-input').value = el.textContent; send(); }
 
 // ====== 历史对话管理 ======
