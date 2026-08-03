@@ -6,141 +6,180 @@
 <title>贴片机行业情报助手 v3 · 团队共享版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;height:100vh;display:flex}
-.sidebar{width:280px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
-.sidebar .user-box{padding:16px;border-bottom:1px solid #e2e8f0}
-.sidebar .user-box input{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;outline:none}
-.sidebar .user-box input:focus{border-color:#4f46e5}
-.sidebar .user-box .uname{font-size:13px;color:#4f46e5;font-weight:600;margin-top:4px}
-.sidebar h3{font-size:12px;color:#64748b;padding:14px 16px 6px;text-transform:uppercase;letter-spacing:.05em}
-.sidebar .stat{display:flex;justify-content:space-between;padding:7px 16px;font-size:13px;color:#1e293b}
-.sidebar .stat span:last-child{font-weight:700;color:#4f46e5}
-.sidebar .btn-sm{display:block;width:calc(100%-32px);margin:4px 16px;padding:7px 0;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#475569;font-size:12px;cursor:pointer;text-align:center;transition:.2s}
-.sidebar .btn-sm:hover{background:#f8fafc;border-color:#cbd5e1}
-.sidebar .btn-sm.danger{color:#ef4444;border-color:#fecaca}
-.sidebar .btn-sm.danger:hover{background:#fef2f2}
-.sidebar .online-list{font-size:11px;color:#475569;padding:4px 16px;line-height:1.8}
-.sidebar .online-list span{margin-right:6px;display:inline-flex;align-items:center;gap:3px}
-.sidebar .dot-live{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block}
-.fact-list{flex:1;overflow-y:auto;padding:0 16px}
-.fact-item{font-size:11px;color:#475569;padding:6px 0;border-bottom:1px solid #f1f5f9;line-height:1.5}
-.cat-tag{transition:.2s}.cat-tag:hover{background:#e2e8f0!important}
-.fact-item .who{color:#4f46e5;font-weight:600}
+body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",sans-serif;height:100vh;display:flex;background:#f7f7f8;color:#1a1a2e}
 
-.main{flex:1;display:flex;flex-direction:column;min-width:0}
-.topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:14px 24px;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap}
-.topbar h1{font-size:17px;color:#1e293b}
-.topbar .sub{font-size:11px;color:#9ca3af;margin-left:auto}
-.topbar .daily-btn{padding:7px 14px;background:#b45309;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
-.topbar .daily-btn:hover{background:#92400e}
-.topbar .daily-btn:disabled{background:#d1d5db;cursor:not-allowed}
-.topbar .status{font-size:11px;color:#22c55e;display:flex;align-items:center;gap:4px}
-.topbar .status .dot{width:7px;height:7px;border-radius:50%;background:#22c55e}
+/* ====== 左侧侧边栏：白底黑字 ====== */
+.sidebar{width:260px;background:#fff;border-right:1px solid #e5e5e5;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;font-size:13px;color:#1a1a2e}
+.sidebar .user-box{padding:14px;border-bottom:1px solid #eee}
+.sidebar .user-box input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;font-family:inherit;outline:none;color:#1a1a2e}
+.sidebar .user-box input:focus{border-color:#1a1a2e}
+.sidebar .user-box .uname{font-size:12px;color:#666;margin-top:4px}
+.sidebar h3{font-size:11px;color:#999;padding:12px 14px 4px;text-transform:uppercase;letter-spacing:.03em}
+.sidebar .stat{display:flex;justify-content:space-between;padding:6px 14px;font-size:12px;color:#333;cursor:pointer}
+.sidebar .stat:hover{background:#f5f5f5}
+.sidebar .stat span:last-child{font-weight:600;color:#1a1a2e}
+.sidebar .btn-sm{display:block;width:calc(100% - 28px);margin:3px 14px;padding:6px 0;border-radius:6px;border:1px solid #ddd;background:#fff;color:#333;font-size:11px;cursor:pointer;text-align:center}
+.sidebar .btn-sm:hover{background:#f5f5f5}
+.sidebar .btn-sm.danger{color:#e03131;border-color:#e03131}
+.sidebar .btn-sm.danger:hover{background:#fff5f5}
+.fact-list{flex:1;overflow-y:auto;padding:0 10px}
+.fact-item{font-size:11px;color:#444;padding:5px 4px;border-bottom:1px solid #f0f0f0;line-height:1.5}
+.cat-tag{cursor:pointer;font-size:10px;padding:2px 7px;background:#eee;color:#555;border-radius:10px;display:inline-block;margin:2px}
+.cat-tag.cat-active,.cat-tag:hover{background:#1a1a2e;color:#fff}
+.fact-item .who{color:#1a1a2e;font-weight:600}
 
-.chat-wrap{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;max-width:900px;width:100%;margin:0 auto}
-.msg{display:flex;gap:12px;max-width:100%;animation:in .25s}
-@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ====== 主区域 ====== */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:#fff}
+.topbar{background:#fff;border-bottom:1px solid #eee;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;min-height:46px}
+.topbar h1{font-size:15px;color:#1a1a2e;font-weight:600}
+.topbar .sub{font-size:10px;color:#999;margin-left:auto}
+.topbar .daily-btn{padding:5px 12px;background:#1a1a2e;color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer}
+.topbar .daily-btn:hover{background:#333}
+.topbar .daily-btn:disabled{background:#ccc;cursor:not-allowed}
+.topbar .status{font-size:10px;color:#40c057;display:flex;align-items:center;gap:4px}
+.topbar .status .dot{width:5px;height:5px;border-radius:50%;background:#40c057}
+
+/* ====== 聊天区 ====== */
+.chat-wrap{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;max-width:800px;width:100%;margin:0 auto}
+.msg{display:flex;gap:10px;max-width:100%}
 .msg.user{flex-direction:row-reverse}
-.msg .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:700}
-.msg.assistant .avatar{background:#eef2ff}
-.msg.user .avatar{background:#4f46e5;color:#fff}
-.msg .bubble{max-width:80%;padding:14px 18px;border-radius:16px;font-size:15px;line-height:1.8;color:#1e293b}
-.msg.assistant .bubble{background:#fff;border:1px solid #e2e8f0;border-top-left-radius:4px}
-.msg.user .bubble{background:#4f46e5;color:#fff;border-top-right-radius:4px}
-.msg .bubble h2{font-size:17px;color:#b45309;margin:10px 0 6px}
-.msg .bubble h3{font-size:15px;color:#4f46e5;margin:8px 0 4px}
-.msg .bubble strong{color:#b45309}
-.msg .bubble .who-tag{font-size:10px;color:#9ca3af;display:block;margin-top:4px}
-
-.typing .bubble{background:#fff;border:1px solid #e2e8f0;color:#9ca3af;font-size:14px;padding:14px 18px;border-radius:16px;border-top-left-radius:4px}
-.typing .dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#9ca3af;margin:0 2px;animation:dot 1.4s infinite}
+.msg .avatar{width:30px;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.msg.assistant .avatar{background:#f0f0f0;color:#555}
+.msg.user .avatar{background:#1a1a2e;color:#fff;border-radius:4px}
+.msg .bubble{max-width:80%;padding:0 0 0 0;font-size:14px;line-height:1.75;color:#1a1a2e}
+.msg.assistant .bubble{padding:0 4px}
+.msg.user .bubble{background:#1a1a2e;color:#fff;padding:10px 16px;border-radius:12px 12px 4px 12px}
+.msg .bubble h2{font-size:15px;color:#e8590c;margin:10px 0 4px;font-weight:600}
+.msg .bubble h3{font-size:14px;color:#1a1a2e;margin:8px 0 4px;font-weight:600}
+.msg .bubble strong{color:#e8590c}
+.msg .bubble .who-tag{font-size:10px;color:#999;display:block;margin-top:2px}
+.msg .bubble table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.msg .bubble table th{background:#f7f7f8;padding:6px 10px;text-align:left;font-weight:600;color:#1a1a2e;border:1px solid #e5e5e5}
+.msg .bubble table td{padding:6px 10px;border:1px solid #e5e5e5;color:#333}
+.msg .bubble a{color:#1a1a2e;text-decoration:underline}
+.msg .bubble a:hover{color:#555}
+.typing .bubble{color:#999;font-size:13px;padding:8px 4px}
+.typing .dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:#ccc;margin:0 2px;animation:dot 1.4s infinite}
 .typing .dots span:nth-child(2){animation-delay:.2s}
 .typing .dots span:nth-child(3){animation-delay:.4s}
 @keyframes dot{0%,60%,100%{opacity:.2}30%{opacity:1}}
 
-.input-bar{background:#fff;border-top:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:10px;flex-shrink:0;align-items:center;max-width:900px;width:100%;margin:0 auto}
-.input-bar input{flex:1;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s}
-.input-bar input:focus{border-color:#4f46e5}
-.input-bar button{padding:12px 24px;background:#4f46e5;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
-.input-bar button:hover{background:#4338ca}
-.input-bar button:disabled{background:#d1d5db;cursor:not-allowed}
+/* ====== 输入栏 ====== */
+.input-bar{background:#fff;border-top:1px solid #eee;padding:14px 24px;display:flex;gap:10px;flex-shrink:0;align-items:center;max-width:800px;width:100%;margin:0 auto}
+.input-bar input{flex:1;padding:10px 16px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:14px;font-family:inherit;outline:none;background:#f7f7f8;color:#1a1a2e}
+.input-bar input:focus{border-color:#1a1a2e;background:#fff}
+.input-bar button{padding:10px 20px;background:#1a1a2e;color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer}
+.input-bar button:hover{background:#333}
+.input-bar button:disabled{background:#ddd;color:#999;cursor:not-allowed}
 
-.suggestions{display:flex;gap:6px;flex-wrap:wrap;padding:0 20px 12px;max-width:900px;width:100%;margin:0 auto}
-.suggestions span{font-size:11px;padding:5px 12px;background:#eef2ff;color:#4f46e5;border-radius:14px;cursor:pointer;transition:.2s}
-.suggestions span:hover{background:#e0e7ff}
+/* ====== 建议标签 ====== */
+.suggestions{display:flex;gap:6px;flex-wrap:wrap;padding:0 20px 10px;max-width:800px;width:100%;margin:0 auto}
+.suggestions span{font-size:11px;padding:4px 10px;background:#f0f0f0;color:#555;border-radius:12px;cursor:pointer}
+.suggestions span:hover{background:#ddd}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:999;animation:tIn .3s}
-@keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.toast-ok{background:#22c55e;color:#fff}
-.toast-err{background:#ef4444;color:#fff}
+/* ====== Toast ====== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:16px;font-size:12px;font-weight:600;z-index:999;animation:tIn .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+@keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.toast-ok{background:#1a1a2e;color:#fff}
+.toast-err{background:#e03131;color:#fff}
 
-@media(max-width:768px){.sidebar{display:none}}
-/* 右侧历史面板 */
-.history-panel{width:260px;background:#fff;border-left:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
-.history-panel h3{font-size:12px;color:#64748b;padding:14px 12px 6px;text-transform:uppercase;letter-spacing:.05em}
-.history-search{padding:8px 12px}
-.history-search input{width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-family:inherit;outline:none}
-.history-search input:focus{border-color:#4f46e5}
-.history-list{flex:1;overflow-y:auto;padding:0 8px}
-.history-item{padding:8px 6px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:.15s;border-radius:6px;margin-bottom:2px}
-.history-item:hover{background:#f8fafc}
-.history-item .hi-title{font-size:12px;color:#1e293b;line-height:1.4;margin-bottom:2px}
-.history-item .hi-meta{font-size:10px;color:#9ca3af;display:flex;justify-content:space-between}
-.stat{display:flex;justify-content:space-between;padding:7px 16px;font-size:13px;color:#1e293b;cursor:pointer;transition:.15s}
-.stat:hover{background:#f8fafc}
-.stat span:last-child{font-weight:700;color:#4f46e5}
-.stat-clickable{cursor:pointer;transition:.15s}.stat-clickable:hover{background:#eef2ff;border-radius:4px}
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:1000;display:flex;align-items:center;justify-content:center}
-.modal-box{background:#fff;border-radius:12px;padding:20px;max-width:360px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-.modal-box h3{font-size:14px;color:#1e293b;margin-bottom:10px}
-.modal-box .user-row{font-size:13px;padding:4px 0;color:#475569}
-.modal-close{float:right;cursor:pointer;font-size:18px;color:#9ca3af}
+/* ====== 右侧历史面板：白底黑字 ====== */
+.history-panel{width:240px;background:#fff;border-left:1px solid #e5e5e5;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;font-size:12px;color:#1a1a2e}
+.history-panel h3{font-size:11px;color:#999;padding:12px 10px 4px;letter-spacing:.03em}
+.history-search{padding:5px 10px}
+.history-search input{width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:5px;font-size:11px;font-family:inherit;outline:none}
+.history-search input:focus{border-color:#1a1a2e}
+.history-list{flex:1;overflow-y:auto;padding:0 6px}
+.history-item{padding:7px 6px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:.15s;border-radius:4px}
+.history-item:hover{background:#f7f7f8}
+.history-item .hi-title{font-size:11px;color:#1a1a2e;line-height:1.4;margin-bottom:2px}
+.history-item .hi-meta{font-size:10px;color:#999;display:flex;justify-content:space-between}
+.stat-clickable{cursor:pointer}
+.stat-clickable:hover{background:#f5f5f5!important;border-radius:4px}
+
+/* ====== 姓名覆盖层 ====== */
+.name-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center}
+.name-overlay .name-box{background:#fff;border-radius:12px;padding:30px 24px;width:340px;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.name-overlay .name-box h3{font-size:16px;color:#1a1a2e;margin-bottom:4px}
+.name-overlay .name-box p{font-size:12px;color:#999;margin-bottom:16px}
+.name-overlay .name-box input{width:100%;padding:11px 14px;border:2px solid #e5e5e5;border-radius:8px;font-size:15px;font-family:inherit;outline:none;text-align:center;color:#1a1a2e}
+.name-overlay .name-box input:focus{border-color:#1a1a2e}
+.name-overlay .name-box button{width:100%;margin-top:12px;padding:10px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer}
+.name-overlay .name-box button:hover{background:#333}
+
+/* ====== 响应式 ====== */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .history-panel{display:none}
+  .chat-wrap{padding:16px}
+  .input-bar{padding:12px 16px}
+  .topbar{padding:10px 16px}
+}
 @media(max-width:1000px){.history-panel{display:none}}
-
 </style>
 </head>
 <body>
 
+<!-- 姓名覆盖层 -->
+<div class="name-overlay" id="name-overlay">
+ <div class="name-box">
+  <h3>👋 欢迎使用贴片机行业情报助手</h3>
+  <p>请输入你的名字以开始使用</p>
+  <input id="overlay-name-input" placeholder="输入你的名字..." onkeydown="if(event.key==='Enter')submitName()">
+  <button onclick="submitName()">进入</button>
+ </div>
+</div>
+
+
 <!-- 侧边栏 -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
  <div class="user-box">
-  <input id="name-input" placeholder="👤 输入你的名字..." onchange="setName()" onblur="setName()">
+  <input id="name-input" placeholder=" 输入你的名字..." onchange="setName()" onblur="setName()">
   <div class="uname" id="name-display"></div>
  </div>
- <h3>📊 共享知识库</h3>
- <div class="stat stat-clickable" onclick="showStats('chats')"><span>💬 总对话</span><span id="stat-chats">-</span></div>
- <div class="stat stat-clickable" onclick="showStats('facts')"><span>📚 已验证知识</span><span id="stat-facts">-</span></div>
- <div class="stat stat-clickable" onclick="showStats('briefs')"><span>📰 速报存档</span><span id="stat-briefs">-</span></div>
- <div class="stat stat-clickable" onclick="showStats('users')"><span>👥 贡献者</span><span id="stat-users">-</span></div>
- <button class="btn-sm" onclick="loadSharedFacts()">🔄 刷新知识库</button>
- <button class="btn-sm" onclick="exportKnowledge()">💾 导出知识库</button>
-	 <h3>📌 最近学到的（全团队）</h3>
-	 <div style="padding:0 16px 4px;display:flex;flex-wrap:wrap;gap:4px" id="cat-filters">
-	  <span class="cat-tag cat-active" onclick="filterFacts('全部',this)">全部</span>
-	  <span class="cat-tag" onclick="filterFacts('产品',this)">产品</span>
-	  <span class="cat-tag" onclick="filterFacts('竞品',this)">竞品</span>
-	  <span class="cat-tag" onclick="filterFacts('客户',this)">客户</span>
-	  <span class="cat-tag" onclick="filterFacts('零部件',this)">零部件</span>
-	  <span class="cat-tag" onclick="filterFacts('政策',this)">政策</span>
-	  <span class="cat-tag" onclick="filterFacts('其他',this)">其他</span>
-	 </div>
- <div class="fact-list" id="fact-list"><div class="fact-item" style="color:#9ca3af">输入名字后加载...</div></div>
+ <h3> 共享知识库</h3>
+ <div class="stat stat-clickable" onclick="showStats('chats')"><span> 总对话</span><span id="stat-chats">-</span></div>
+ <div class="stat stat-clickable" onclick="showStats('facts')"><span> 已验证知识</span><span id="stat-facts">-</span></div>
+ <div class="stat stat-clickable" onclick="showStats('briefs')"><span> 速报存档</span><span id="stat-briefs">-</span></div>
+ 
+ <button class="btn-sm" onclick="loadSharedFacts()"> 刷新知识库</button>
+ <button class="btn-sm" onclick="exportKnowledge()"> 导出知识库</button>
+ <button class="btn-sm" onclick="document.getElementById('file-upload').click()"> 上传文档</button>
+ <h3>🎓 高校人才搜索</h3>
+ <button class="btn-sm" id="hr-motor-btn" onclick="hrSearchMotor()"> 电机驱控研发</button>
+ <button class="btn-sm" id="hr-mech-btn" onclick="hrSearchMech()"> 机械设计研发</button>
+ <span id="hr-status" style="font-size:10px;color:#999;padding:0 14px;display:none"></span>
+ <input type="file" id="file-upload" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="uploadDoc(this.files[0])">
+ <span id="upload-status" style="font-size:10px;color:#999;padding:0 14px;display:none"></span>
+ <h3> 最近学到的（全团队）</h3>
+ <div style="padding:0 12px 4px;display:flex;flex-wrap:wrap;gap:3px" id="cat-filters">
+  <span class="cat-tag cat-active" onclick="filterFacts('全部',this)">全部</span>
+  <span class="cat-tag" onclick="filterFacts('产品',this)">产品</span>
+  <span class="cat-tag" onclick="filterFacts('竞品',this)">竞品</span>
+  <span class="cat-tag" onclick="filterFacts('客户',this)">客户</span>
+  <span class="cat-tag" onclick="filterFacts('零部件',this)">零部件</span>
+  <span class="cat-tag" onclick="filterFacts('政策',this)">政策</span>
+  <span class="cat-tag" onclick="filterFacts('其他',this)">其他</span>
+ </div>
+ <div class="fact-list" id="fact-list"><div class="fact-item" style="color:#6c757d">输入名字后加载...</div></div>
 </div>
+
+<button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" >☰</button>
 
 <!-- 主区域 -->
 <div class="main">
 <div class="topbar">
- <h1>🤖 贴片机行业情报助手 v3</h1>
- <button class="daily-btn" id="daily-btn" onclick="dailyBrief()">⚡ 一键今日速报</button>
- <span class="status"><span class="dot"></span> 云端共享模式</span>
- <span class="sub">全团队共用 · Supabase</span>
+ <h1>Churui_Agent</h1>
+ <button class="daily-btn" id="daily-btn" onclick="dailyBrief()"> 今日速报</button>
+ <span class="status"><span class="dot"></span> 在线</span>
+ <span class="sub">Netlify</span>
 </div>
 
 <div class="suggestions" id="suggestions"></div>
 <div class="chat-wrap" id="chat"></div>
 
 <div class="input-bar">
- <input type="text" id="user-input" placeholder="输入你的问题..." onkeydown="if(event.key==='Enter')send()">
+ <input type="text" id="user-input" placeholder="输入问题，Enter 发送..." onkeydown="if(event.key==='Enter')send()">
  <button id="send-btn" onclick="send()">发送</button>
 </div>
 </div>
@@ -148,12 +187,12 @@ body{background:#f8fafc;font-family:-apple-system,"Microsoft YaHei",sans-serif;h
 
 <!-- 右侧历史面板 -->
 <div class="history-panel">
- <h3>📋 对话历史</h3>
+ <h3> 对话历史</h3>
  <div class="history-search">
-  <input type="text" id="history-search-input" placeholder="🔍 搜索历史对话..." oninput="searchHistory()">
+  <input type="text" id="history-search-input" placeholder=" 搜索历史对话..." oninput="searchHistory()">
  </div>
  <div class="history-list" id="history-list">
-  <div style="font-size:11px;color:#9ca3af;padding:8px;text-align:center">加载中...</div>
+  <div style="font-size:11px;color:#868e96;padding:8px;text-align:center">加载中...</div>
  </div>
 </div>
 
@@ -518,18 +557,40 @@ function checkKnowledgeFreshness(kb){
 // ====== 用户设置 ======
 let userName = localStorage.getItem('agent3_user') || '';
 
+// 侧边栏折叠
+
+
+
+// 姓名覆盖层
+function submitName(){
+ var v = document.getElementById('overlay-name-input').value.trim();
+ if(!v){ toast('请输入名字','err'); return; }
+ userName = v;
+ localStorage.setItem('agent3_user', userName);
+ document.getElementById('name-input').value = userName;
+ document.getElementById('name-display').textContent = ' ' + userName;
+ document.getElementById('name-overlay').style.display = 'none';
+ toast('你好，' + userName + '！', 'ok');
+ loadSharedFacts();
+}
+if(userName){
+ document.getElementById('name-overlay').style.display = 'none';
+ document.getElementById('name-input').value = userName;
+ document.getElementById('name-display').textContent = ' ' + userName;
+}
+
 function setName(){
  const v = document.getElementById('name-input').value.trim();
  if(v && v !== userName){
   userName = v;
   localStorage.setItem('agent3_user', userName);
-  document.getElementById('name-display').textContent = '✅ ' + userName;
+  document.getElementById('name-display').textContent = ' ' + userName;
   toast('你好，' + userName + '！', 'ok');
   loadSharedFacts();
  }
 }
 document.getElementById('name-input').value = userName;
-if(userName) document.getElementById('name-display').textContent = '✅ ' + userName;
+if(userName) document.getElementById('name-display').textContent = ' ' + userName;
 
 // ====== Supabase 操作 ======
 async function supabasePost(data){
@@ -588,16 +649,16 @@ async function loadSharedFacts(category){
 		  facts = facts.filter(function(f){ var c = f.content || {}; return c.status !== 'deleted'; });
 	  facts = facts.slice(0, 30);
 
-	  document.getElementById('stat-facts').textContent = facts.length > 0 ? '+' + facts.length : '-';
+	  var sf=document.getElementById('stat-facts'); if(sf) sf.textContent = facts.length > 0 ? '+' + facts.length : '-';
 	  document.getElementById('fact-list').innerHTML = facts.length > 0
 	   ? facts.map(function(f){
 	    var c = f.content || {};
 	    var cat = c.category || '其他';
 	    var colors = {'产品':'#4f46e5','竞品':'#b45309','客户':'#059669','零部件':'#0891b2','政策':'#dc2626','其他':'#9ca3af'};
 	    var catColor = colors[cat] || '#9ca3af';
-		    var statusIcon = c.status === 'verified' ? ' ✅' : '';
-		    return '<div class="fact-item"><span class="who">'+f.user_name+'</span> <span style="font-size:9px;background:'+catColor+';color:#fff;padding:1px 5px;border-radius:8px;margin-right:3px">'+cat+'</span>'+statusIcon+' '+(c.text||'').slice(0,60)
-		     + '<span style="float:right;cursor:pointer;opacity:0.5" title="确认" onclick="event.stopPropagation();verifyFact(\''+f.id+'\')">✅</span>'
+		    var statusIcon = c.status === 'verified' ? ' ' : '';
+		    return '<div class="fact-item"><span class="who">'+f.user_name+'</span> <span style="font-size:9px;background:'+catColor+';color:#fff;padding:1px 5px;border-radius:8px;margin-right:3px">'+cat+'</span>'+statusIcon+' '+(c.text||'').slice(0,120)
+		     + '<span style="float:right;cursor:pointer;opacity:0.5" title="确认" onclick="event.stopPropagation();verifyFact(\''+f.id+'\')"></span>'
 		     + '<span style="float:right;cursor:pointer;opacity:0.5;margin-right:4px" title="删除" onclick="event.stopPropagation();deleteFact(\''+f.id+'\')">❌</span>'
 		     + '</div>';
 	   }).join('')
@@ -606,7 +667,7 @@ async function loadSharedFacts(category){
 	  // 统计用户数
 	  var userList = await supabaseGet({ select: 'user_name', order: 'created_at.desc', limit: '500' });
 	  var users = [...new Set(userList.map(function(u){return u.user_name;}).filter(Boolean))];
-	  document.getElementById('stat-users').textContent = users.length > 0 ? users.length + '人' : '-'; loadHistory();
+	  var su=document.getElementById('stat-users'); if(su) su.textContent = users.length > 0 ? users.length + '人' : '-'; loadHistory();
 	 } catch(e){ console.error(e); }
 }
 
@@ -721,13 +782,13 @@ async function learnAndShare(question, answer){
 	  '关键', '核心', '龙头', '替代', '对标'
 	 ];
 
-	 var LEARN_REGEX = new RegExp('[^。！？\\n]+(?:' + LEARN_KEYWORDS.join('|') + ')[^。！？\\n]*', 'g');
+	 var LEARN_REGEX = new RegExp('[^。！？\\n]{15,}(?:' + LEARN_KEYWORDS.join('|') + ')[^。！？\\n]{5,}', 'g');
 	 var keySentences = answer.match(LEARN_REGEX);
 
 	 if(!keySentences) return;
 	 for(var i = 0; i < keySentences.length; i++){
 	  var s = keySentences[i];
-	  if(s.length < 10 || s.length > 300) continue;
+	  if(s.length < 25 || s.length > 250) continue;
 	  try {
 	   var txt = s.trim();
 	   // B3 去重
@@ -797,8 +858,8 @@ function addMsg(role, text, who){
  const chat = document.getElementById('chat');
  const div = document.createElement('div');
  div.className = 'msg ' + (role==='user'?'user':'assistant');
- const avatarText = role==='user' ? (userName||'👤').charAt(0) : '🤖';
- div.innerHTML = `<div class="avatar">${avatarText}</div><div class="bubble">${renderMarkdown(text)}${who?`<span class="who-tag">— ${who}</span>`:''}</div>`;
+ var avatarHtml = role==='user' ? '<span>'+(userName||'?').charAt(0)+'</span>' : '<img src=logo.png style=width:100%;height:100%;border-radius:4px;object-fit:cover>';
+ div.innerHTML = `<div class="avatar" style="overflow:hidden">${avatarHtml}</div><div class="bubble">${renderMarkdown(text)}${who?`<span class="who-tag">— ${who}</span>`:''}</div>`;
  chat.appendChild(div);
  chat.scrollTop = chat.scrollHeight;
 }
@@ -807,7 +868,7 @@ function toast(msg, type){ const t=document.createElement('div');t.className='to
 
 async function send(){
  if(isGenerating) return;
- if(!userName){ toast('请先在左侧输入你的名字','err'); return; }
+ if(!userName){ document.getElementById('name-overlay').style.display='flex'; toast('请先输入名字','err'); return; }
  const input = document.getElementById('user-input');
  const text = input.value.trim();
  if(!text) return;
@@ -821,7 +882,7 @@ async function send(){
  isGenerating = true; document.getElementById('send-btn').disabled = true;
 
  const typingDiv = document.createElement('div'); typingDiv.className = 'typing';
- typingDiv.innerHTML = '<div class="avatar" style="width:34px;height:34px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🤖</div><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div>';
+ typingDiv.innerHTML = '<div class="avatar" style="width:34px;height:34px;overflow:hidden;flex-shrink:0"><img src=logo.png style=width:100%;height:100%;border-radius:4px;object-fit:cover></div><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div>';
  document.getElementById('chat').appendChild(typingDiv);
  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
@@ -840,7 +901,7 @@ async function send(){
 		    console.log('搜索缓存命中（' + searchSources.length + '条来源）');
 		   } else {
 		   console.log('[v3.4] 搜索: '+text.slice(0,50)+'...');
-		   const searchResp = await fetch('/api/search', {
+		   const searchResp = await fetch('https://churuiagent.netlify.app/.netlify/functions/search', {
 		    method: 'POST',
 		    headers: {'Content-Type': 'application/json'},
 		    body: JSON.stringify({ query: text })
@@ -870,7 +931,7 @@ async function send(){
 		  window._searchFromCache = fromCache;
 
   // v3.4: 通过 /api/chat 代理调用 DeepSeek
-	  const chatResp = await fetch('/api/chat', {
+	  const chatResp = await fetch('https://churuiagent.netlify.app/.netlify/functions/chat', {
 	   method:'POST',
 	   headers:{'Content-Type':'application/json'},
 	   body:JSON.stringify({ messages: messages.slice(1), searchPromptText: searchResults })
@@ -880,7 +941,7 @@ async function send(){
 	  const reply = chatData.reply||'（未返回内容）';
 	  // v3.4: 无搜索结果时标注知识库驱动
 	  var isKbDriven = (searchSources.length === 0);
-	  var displayReply = isKbDriven ? '📚 以下回答由知识库驱动（未使用联网搜索）\n\n' + reply : reply;
+	  var displayReply = isKbDriven ? ' 以下回答由知识库驱动（未使用联网搜索）\n\n' + reply : reply;
 
   typingDiv.remove();
   addMsg('assistant', displayReply, 'Agent');
@@ -905,7 +966,7 @@ async function dailyBrief(){
  if(isGenerating) return;
  if(!userName){ toast('请先输入名字','err'); return; }
  const today = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
- const prompt = `请结合知识库和联网搜索结果，生成一份贴片机行业简报（${today}）。面向研发人员，聚焦产品/技术动态。搜索有结果用[1][2]角标引用，搜索无结果就说未找到，禁止编造。\n## 📋 行业简报\n### 🔴 关键洞察（产品/技术层面）\n### 🟡 趋势方向（零部件国产替代机会）\n### 🟢 楚瑞机会（具体可跟进的产品/客户）\n### ⚠️ 建议人工核实`;
+ const prompt = `请结合知识库和联网搜索结果，生成一份贴片机行业简报（${today}）。面向研发人员，聚焦产品/技术动态。搜索有结果用[1][2]角标引用，搜索无结果就说未找到，禁止编造。\n##  行业简报\n### 🔴 关键洞察（产品/技术层面）\n### 🟡 趋势方向（零部件国产替代机会）\n### 🟢 楚瑞机会（具体可跟进的产品/客户）\n### ⚠️ 建议人工核实`;
  document.getElementById('user-input').value = prompt;
  send();
  setTimeout(async ()=>{
@@ -926,6 +987,59 @@ function exportKnowledge(){
  });
 }
 
+
+	// 文档上传（PDF/Word）
+	async function uploadDoc(file){
+	 if(!file) return;
+	 var status = document.getElementById('upload-status');
+	 status.style.display = 'block'; status.textContent = '上传中...';
+	 var reader = new FileReader();
+	 reader.onload = async function(){
+	  try {
+	   var base64 = reader.result.split(',')[1];
+	   var ext = file.name.split('.').pop().toLowerCase();
+	   var resp = await fetch('https://churuiagent.netlify.app/.netlify/functions/upload-doc', {
+	    method: 'POST',
+	    headers: {'Content-Type': 'application/json'},
+	    body: JSON.stringify({fileName: file.name, fileData: base64, fileType: ext})
+	   });
+	   var data = await resp.json();
+	   if(data.ok){
+	    toast('文档已入库：' + data.chunks + '个文本块', 'ok');
+	    status.textContent = '已上传：' + data.chunks + '块';
+	   } else {
+	    toast('上传失败：' + (data.error||'未知错误'), 'err');
+	   }
+	  } catch(e){ toast('上传失败', 'err'); }
+	 };
+	 reader.readAsDataURL(file);
+	}
+
+	// 高校人才搜索
+	async function hrSearch(role){
+	 var btn = document.getElementById('hr-motor-btn');
+	 var btn2 = document.getElementById('hr-mech-btn');
+	 var status = document.getElementById('hr-status');
+	 if(btn) btn.disabled = true; if(btn2) btn2.disabled = true;
+	 status.style.display = 'block'; status.textContent = '搜索中...';
+	 try {
+	  var resp = await fetch('https://churuiagent.netlify.app/.netlify/functions/hr-schools', {
+	   method: 'POST',
+	   headers: {'Content-Type': 'application/json'},
+	   body: JSON.stringify({role: role})
+	  });
+	  var data = await resp.json();
+	  if(data.table){
+	   addMsg('assistant', data.table, 'HR助手');
+	   status.textContent = '找到' + (data.universities||[]).length + '所高校';
+	  } else {
+	   addMsg('assistant', '搜索失败：' + (data.error||'未知'), 'HR助手');
+	  }
+	 } catch(e){ addMsg('assistant', '请求失败', 'HR助手'); }
+	 if(btn) btn.disabled = false; if(btn2) btn2.disabled = false;
+	}
+	function hrSearchMotor(){ hrSearch('motor'); }
+	function hrSearchMech(){ hrSearch('mechanical'); }
 function askSuggestion(el){ document.getElementById('user-input').value = el.textContent; send(); }
 
 // ====== 历史对话管理 ======
@@ -964,7 +1078,7 @@ function loadHistory(filter){
     return '<div class="history-item" onclick="reAsk(this)" data-question="'+qEncoded+'"><div class="hi-title">'+title+'</div><div class="hi-meta"><span>'+c.user_name+'</span><span style="color:'+cc+'">'+cat+'</span></div></div>';
    }).join('')
    : '<div style="font-size:11px;color:#9ca3af;padding:8px;text-align:center">暂无历史对话</div>';
-  document.getElementById('stat-chats').textContent = unique.length;
+  var sc=document.getElementById('stat-chats'); if(sc) sc.textContent = unique.length;
  }).catch(function(){});
 }
 
@@ -988,8 +1102,8 @@ function showStats(type){
  if(type==='users'){
   supabaseGet({ select: 'user_name', order: 'created_at.desc', limit: '500' }).then(function(list){
    var names = [...new Set(list.map(function(u){return u.user_name;}).filter(Boolean))];
-   var html = '<div class="modal-overlay" onclick="this.remove()"><div class="modal-box" onclick="event.stopPropagation()"><span class="modal-close" onclick="this.parentElement.parentElement.remove()">✕</span><h3>👥 贡献者（'+names.length+'人）</h3>';
-   names.forEach(function(n){ html += '<div class="user-row">👤 '+n+'</div>'; });
+   var html = '<div class="modal-overlay" onclick="this.remove()"><div class="modal-box" onclick="event.stopPropagation()"><span class="modal-close" onclick="this.parentElement.parentElement.remove()">✕</span><h3> 贡献者（'+names.length+'人）</h3>';
+   names.forEach(function(n){ html += '<div class="user-row"> '+n+'</div>'; });
    html += '</div></div>';
    document.body.insertAdjacentHTML('beforeend', html);
   });
@@ -1014,7 +1128,7 @@ function showStats(type){
 }
 
 // 修改左侧统计栏为可点击
-document.getElementById('suggestions').innerHTML = ['⚡ 一日速报','路远LY-CP860与松下NPM-D3参数对比','安川Σ-7 vs 汇川SV660 谁更适合贴片机','纽威数控导轨/光栅尺采购现状','最近贴片机零部件国产替代有什么进展？'].map(s=>`<span onclick="askSuggestion(this)">${s}</span>`).join('');
+document.getElementById('suggestions').innerHTML = [' 一日速报','路远LY-CP860与松下NPM-D3参数对比','安川Σ-7 vs 汇川SV660 谁更适合贴片机','纽威数控导轨/光栅尺采购现状','最近贴片机零部件国产替代有什么进展？'].map(s=>`<span onclick="askSuggestion(this)">${s}</span>`).join('');
 document.addEventListener('keydown',function(e){ if(e.ctrlKey&&e.key==='Enter')send(); });
 loadKnowledgeBase();
 loadHistory();
